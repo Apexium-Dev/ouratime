@@ -1,0 +1,126 @@
+/* ── Step indicator ── */
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.stepDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background-color: #e2e0de;
+  transition: background-color 0.2s, width 0.2s;
+}
+
+.stepDotActive {
+  background-color: #008080;
+  width: 24px;
+}
+
+.stepLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #aaa;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Wide card for customize step ── */
+.wideCard {
+  max-width: 580px;
+}
+
+/* ── Option grid ── */
+.question {
+  margin-bottom: 1.75rem;
+}
+
+.questionLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #050505;
+  margin: 0 0 0.875rem;
+}
+
+.optionGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.optionCard {
+  padding: 0.875rem 1rem;
+  border: 1.5px solid #e2e0de;
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.optionCard:hover {
+  border-color: #b0d0d0;
+}
+
+.optionCardSelected {
+  border-color: #008080;
+  background-color: #f0fafa;
+}
+
+.optionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #050505;
+}
+
+.optionCardSelected .optionTitle {
+  color: #008080;
+}
+
+.optionDesc {
+  font-size: 0.8rem;
+  color: #999;
+  line-height: 1.4;
+}
+
+/* ── Terms checkbox ── */
+.checkboxRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  margin-top: 0.25rem;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #008080;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.checkboxLabel {
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.checkboxLabel a {
+  color: #008080;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.checkboxLabel a:hover {
+  color: #006666;
+}

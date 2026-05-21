@@ -12,7 +12,6 @@ export default function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
@@ -22,16 +21,18 @@ export default function SignUp() {
     }
     setLoading(true);
     setError("");
-    setSuccess("");
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
       if (error) {
         setError(error.message);
       } else {
-        setSuccess("Account created! Check your email to confirm your address.");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
+        window.location.href = "/onboarding/profile";
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -94,7 +95,6 @@ export default function SignUp() {
             </div>
 
             {error && <p className={styles.errorMsg}>{error}</p>}
-            {success && <p className={styles.successMsg}>{success}</p>}
 
             <button type="submit" className={styles.submitBtn} disabled={loading}>
               {loading ? "Creating account…" : "Create Account"}

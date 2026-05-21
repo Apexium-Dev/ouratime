@@ -60,7 +60,7 @@ export function Navbar() {
     window.location.href = "/";
   };
 
-  const authPages = ["/login", "/signup", "/forgot-password"];
+  const authPages = ["/login", "/signup", "/forgot-password", "/verify-email", "/auth/callback", "/onboarding/profile", "/onboarding/customize"];
   if (authPages.includes(pathname)) return null;
 
   const links = user ? appLinks : marketingLinks;
