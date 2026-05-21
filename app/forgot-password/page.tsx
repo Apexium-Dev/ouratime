@@ -6,22 +6,26 @@ import { supabase } from "@/lib/supabase";
 import { AuthNavbar } from "@/components/AuthNavbar";
 import styles from "../auth.module.css";
 
-export default function Login() {
+export default function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleLogin = async (e: FormEvent) => {
+  const handleReset = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
       if (error) {
         setError(error.message);
       } else {
-        window.location.href = "/dashboard";
+        setSuccess("Check your email — we sent a password reset link.");
+        setEmail("");
       }
     } catch {
       setError("An unexpected error occurred. Please try again.");
@@ -36,10 +40,12 @@ export default function Login() {
       <main className={styles.main}>
         <div className={styles.card}>
           <Link href="/" className={styles.cardBrand}>ouratime</Link>
-          <h1 className={styles.cardTitle}>Welcome back</h1>
-          <p className={styles.cardSubtitle}>Sign in to your workspace</p>
+          <h1 className={styles.cardTitle}>Reset your password</h1>
+          <p className={styles.cardSubtitle}>
+            Enter your email and we&apos;ll send you a reset link
+          </p>
 
-          <form className={styles.form} onSubmit={handleLogin}>
+          <form className={styles.form} onSubmit={handleReset}>
             <div className={styles.fieldGroup}>
               <label className={styles.label} htmlFor="email">Email address</label>
               <input
@@ -54,36 +60,17 @@ export default function Login() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
-              <div className={styles.fieldRow}>
-                <label className={styles.label} htmlFor="password">Password</label>
-                <Link href="/forgot-password" className={styles.forgotLink}>
-                  Forgot password?
-                </Link>
-              </div>
-              <input
-                id="password"
-                className={styles.input}
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
-            </div>
-
             {error && <p className={styles.errorMsg}>{error}</p>}
+            {success && <p className={styles.successMsg}>{success}</p>}
 
             <button type="submit" className={styles.submitBtn} disabled={loading}>
-              {loading ? "Signing in…" : "Sign In"}
+              {loading ? "Sending…" : "Send reset link"}
             </button>
           </form>
 
           <hr className={styles.divider} />
           <p className={styles.switchText}>
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className={styles.switchLink}>Sign up</Link>
+            <Link href="/login" className={styles.switchLink}>← Back to sign in</Link>
           </p>
         </div>
       </main>

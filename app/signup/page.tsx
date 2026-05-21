@@ -1,7 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { AuthNavbar } from "@/components/AuthNavbar";
+import styles from "../auth.module.css";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -13,79 +16,110 @@ export default function SignUp() {
 
   const handleSignUp = async (e: FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     setError("");
     setSuccess("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
+      const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         setError(error.message);
       } else {
-        setSuccess("Sign up successful! Check your email to confirm.");
+        setSuccess("Account created! Check your email to confirm your address.");
         setEmail("");
         setPassword("");
         setConfirmPassword("");
       }
-    } catch (err) {
-      setError("An error occurred");
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main>
-      <div>
-        <h1>Sign Up</h1>
-        <form onSubmit={handleSignUp}>
-          <div>
-            <label htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+    <div className={styles.page}>
+      <AuthNavbar />
+      <main className={styles.main}>
+        <div className={styles.card}>
+          <Link href="/" className={styles.cardBrand}>ouratime</Link>
+          <h1 className={styles.cardTitle}>Create your account</h1>
+          <p className={styles.cardSubtitle}>Start tracking your time today — free, forever</p>
+
+          <form className={styles.form} onSubmit={handleSignUp}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label} htmlFor="email">Email address</label>
+              <input
+                id="email"
+                className={styles.input}
+                type="email"
+                placeholder="name@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.label} htmlFor="password">Password</label>
+              <input
+                id="password"
+                className={styles.input}
+                type="password"
+                placeholder="Min. 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.label} htmlFor="confirmPassword">Confirm password</label>
+              <input
+                id="confirmPassword"
+                className={styles.input}
+                type="password"
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                autoComplete="new-password"
+              />
+            </div>
+
+            {error && <p className={styles.errorMsg}>{error}</p>}
+            {success && <p className={styles.successMsg}>{success}</p>}
+
+            <button type="submit" className={styles.submitBtn} disabled={loading}>
+              {loading ? "Creating account…" : "Create Account"}
+            </button>
+          </form>
+
+          <hr className={styles.divider} />
+          <p className={styles.switchText}>
+            Already have an account?{" "}
+            <Link href="/login" className={styles.switchLink}>Sign in</Link>
+          </p>
+        </div>
+      </main>
+
+      <footer className={styles.footer}>
+        <div className={styles.footerInner}>
+          <Link href="/" className={styles.footerLogo}>ouratime</Link>
+          <p className={styles.footerCopy}>© 2025 ouratime. Open-source time tracking.</p>
+          <div className={styles.footerLinks}>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms of Service</Link>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
           </div>
-          <div>
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
-          {error && <p>{error}</p>}
-          {success && <p>{success}</p>}
-          <button type="submit" disabled={loading}>
-            {loading ? "Signing up..." : "Sign Up"}
-          </button>
-        </form>
-      </div>
-    </main>
+        </div>
+      </footer>
+    </div>
   );
 }

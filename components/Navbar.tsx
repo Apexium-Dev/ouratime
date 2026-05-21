@@ -60,6 +60,9 @@ export function Navbar() {
     window.location.href = "/";
   };
 
+  const authPages = ["/login", "/signup", "/forgot-password"];
+  if (authPages.includes(pathname)) return null;
+
   const links = user ? appLinks : marketingLinks;
 
   return (
