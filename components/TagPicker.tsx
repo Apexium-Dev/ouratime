@@ -23,6 +23,7 @@ export function TagPicker({ selectedTags, onChange, disabled }: Props) {
   const [search, setSearch]         = useState("");
   const [open, setOpen]             = useState(false);
   const [creating, setCreating]     = useState(false);
+  const [pickedColor, setPickedColor] = useState(TAG_COLORS[0]);
   const wrapRef  = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,9 +43,10 @@ export function TagPicker({ selectedTags, onChange, disabled }: Props) {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
-  // Focus search when opening
+  // Focus search when opening; reset color picker when closing
   useEffect(() => {
     if (open) setTimeout(() => inputRef.current?.focus(), 50);
+    else { setSearch(""); setPickedColor(TAG_COLORS[0]); }
   }, [open]);
 
   const filtered = allTags.filter(
@@ -70,16 +72,16 @@ export function TagPicker({ selectedTags, onChange, disabled }: Props) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setCreating(false); return; }
 
-    const color = TAG_COLORS[allTags.length % TAG_COLORS.length];
     const { data, error } = await supabase
       .from("tags")
-      .insert({ user_id: user.id, name, color })
+      .insert({ user_id: user.id, name, color: pickedColor })
       .select().single();
 
     if (!error && data) {
       setAllTags((prev) => [...prev, data].sort((a, b) => a.name.localeCompare(b.name)));
       onChange([...selectedTags, data]);
       setSearch("");
+      setPickedColor(TAG_COLORS[0]);
     }
     setCreating(false);
   };
@@ -173,20 +175,32 @@ export function TagPicker({ selectedTags, onChange, disabled }: Props) {
             </div>
           )}
 
-          {/* Create option */}
+          {/* Create option with color picker */}
           {search.trim() && !exactExists && (
             <>
               {(filtered.length > 0 || selectedTags.length > 0) && <div className={styles.divider} />}
-              <button
-                className={`${styles.tagRow} ${styles.tagRowCreate}`}
-                onMouseDown={createTag}
-                disabled={creating}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                {creating ? "Creating…" : `Create "${search.trim()}"`}
-              </button>
+              <div className={styles.createSection}>
+                <div className={styles.colorSwatches}>
+                  {TAG_COLORS.map((c) => (
+                    <button
+                      key={c}
+                      className={`${styles.colorSwatch} ${pickedColor === c ? styles.colorSwatchActive : ""}`}
+                      style={{ background: c }}
+                      onMouseDown={(e) => { e.preventDefault(); setPickedColor(c); }}
+                      aria-label={c}
+                    />
+                  ))}
+                </div>
+                <button
+                  className={`${styles.tagRow} ${styles.tagRowCreate}`}
+                  style={{ color: pickedColor }}
+                  onMouseDown={createTag}
+                  disabled={creating}
+                >
+                  <span className={styles.tagDot} style={{ background: pickedColor }} />
+                  {creating ? "Creating…" : `Create "${search.trim()}"`}
+                </button>
+              </div>
             </>
           )}
 

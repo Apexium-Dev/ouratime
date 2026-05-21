@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { CreateProjectModal } from "./CreateProjectModal";
@@ -109,6 +108,21 @@ export function DashboardNavbar() {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  // ── Resume event from dashboard ───────────────────────────
+  useEffect(() => {
+    function handle(e: Event) {
+      const { description: desc, project, tags, billable: b } =
+        (e as CustomEvent).detail;
+      setDescription(desc ?? "");
+      setSelectedTask(null);
+      setSelectedProject(project ?? null);
+      setSelectedTags(tags ?? []);
+      setBillable(b ?? true);
+    }
+    window.addEventListener("ouratime:resume", handle);
+    return () => window.removeEventListener("ouratime:resume", handle);
+  }, []);
+
   // ── Timer interval ─────────────────────────────────────────
   useEffect(() => {
     if (running) {
@@ -215,12 +229,6 @@ export function DashboardNavbar() {
               <span className={styles.userGreeting}>Hey,</span>
               <span className={styles.userName}>{userName}</span>
             </div>
-            <Link href="/dashboard/settings" className={styles.settingsLink} title="Settings">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
-              </svg>
-            </Link>
           </div>
 
           {/* ── Description / task search ── */}
@@ -247,46 +255,79 @@ export function DashboardNavbar() {
                 disabled={running}
               />
 
-              {showSuggestions && !running && selectedProject && (
-                <div className={styles.suggestions}>
-                  {filteredTasks.length > 0 && (
-                    <>
-                      <p className={styles.suggestionsLabel}>Tasks in {selectedProject.name}</p>
+              {showSuggestions && !running && (
+                <div className={styles.entryPanel}>
+
+                  {/* Tasks section — only when a project is selected */}
+                  {selectedProject && (
+                    <div className={styles.panelBlock}>
+                      <p className={styles.panelLabel}>
+                        <span className={styles.taskDot} style={{ background: selectedProject.color }} />
+                        Tasks in {selectedProject.name}
+                      </p>
                       {filteredTasks.map((task) => (
                         <button
                           key={task.id}
                           className={styles.suggestionItem}
                           onMouseDown={() => pickTask(task)}
                         >
-                          <span
-                            className={styles.taskDot}
-                            style={{ background: selectedProject.color }}
-                          />
+                          <span className={styles.taskDot} style={{ background: selectedProject.color }} />
                           {task.name}
                         </button>
                       ))}
-                    </>
+                      {showCreateOption && (
+                        <button
+                          className={`${styles.suggestionItem} ${styles.suggestionCreate}`}
+                          onMouseDown={() => setShowSuggestions(false)}
+                        >
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <path d="M12 5v14M5 12h14" />
+                          </svg>
+                          Create &ldquo;{description.trim()}&rdquo;
+                        </button>
+                      )}
+                      {!filteredTasks.length && !showCreateOption && (
+                        <p className={styles.suggestionsEmpty}>No tasks yet — type a name to create one</p>
+                      )}
+                    </div>
                   )}
-                  {showCreateOption && (
-                    <button
-                      className={`${styles.suggestionItem} ${styles.suggestionCreate}`}
-                      onMouseDown={() => setShowSuggestions(false)}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                        <path d="M12 5v14M5 12h14" />
-                      </svg>
-                      Create &ldquo;{description.trim()}&rdquo;
-                    </button>
-                  )}
-                  {!filteredTasks.length && !showCreateOption && (
-                    <p className={styles.suggestionsEmpty}>No tasks yet</p>
-                  )}
-                </div>
-              )}
 
-              {showSuggestions && !running && !selectedProject && (
-                <div className={styles.suggestions}>
-                  <p className={styles.suggestionsEmpty}>Select a project first to search tasks</p>
+                  {selectedProject && <div className={styles.panelDivider} />}
+
+                  {/* Project picker section */}
+                  <div className={styles.panelBlock}>
+                    <p className={styles.panelLabel}>Project</p>
+                    <div className={styles.projectChips}>
+                      <button
+                        className={`${styles.projectChip} ${!selectedProject ? styles.projectChipNone : ""}`}
+                        onMouseDown={() => setSelectedProject(null)}
+                      >
+                        <span className={styles.projectChipDotEmpty} />
+                        No project
+                      </button>
+                      {projects.map((p) => (
+                        <button
+                          key={p.id}
+                          className={`${styles.projectChip} ${selectedProject?.id === p.id ? styles.projectChipActive : ""}`}
+                          onMouseDown={() => setSelectedProject(p)}
+                          style={selectedProject?.id === p.id ? { borderColor: p.color, background: p.color + "18" } : {}}
+                        >
+                          <span className={styles.projectChipDot} style={{ background: p.color }} />
+                          {p.name}
+                        </button>
+                      ))}
+                      <button
+                        className={`${styles.projectChip} ${styles.projectChipCreate}`}
+                        onMouseDown={() => { setShowSuggestions(false); setShowProjectModal(true); }}
+                      >
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <path d="M12 5v14M5 12h14" />
+                        </svg>
+                        New project
+                      </button>
+                    </div>
+                  </div>
+
                 </div>
               )}
             </div>

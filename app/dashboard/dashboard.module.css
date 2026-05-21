@@ -1,0 +1,268 @@
+.page {
+  padding: 2rem 2rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Stats row ── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+
+.statLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #008080;
+  margin: 0;
+}
+
+.statValue {
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin: 0;
+}
+
+.statValueTeal {
+  color: #008080;
+}
+
+/* ── Day groups ── */
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.groupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.25rem;
+}
+
+.groupLabel {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #050505;
+}
+
+.groupTotal {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #008080;
+  letter-spacing: 0.04em;
+}
+
+/* ── Entry card (grouped container) ── */
+.entryCard {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Single entry row ── */
+.entryRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+  transition: background 0.1s;
+}
+
+.entryRow:hover {
+  background: #fdfcfb;
+}
+
+.entryRowBorder {
+  border-bottom: 1px solid #f5f3f1;
+}
+
+/* ── Icon ── */
+.entryIcon {
+  color: #ccc;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  width: 16px;
+}
+
+.entryIconRunning {
+  color: #008080;
+}
+
+.runningDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #008080;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.2);
+  animation: pulse 1.6s ease-in-out infinite;
+  display: block;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.2); }
+  50%       { box-shadow: 0 0 0 6px rgba(0, 128, 128, 0.08); }
+}
+
+/* ── Entry main ── */
+.entryMain {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.entryDesc {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #050505;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noDesc {
+  color: #ccc;
+  font-weight: 400;
+}
+
+.entryMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.projectChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #888;
+}
+
+.projectDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tagChip {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.71rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── Duration + play ── */
+.entryRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.duration {
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #bbb;
+  letter-spacing: 0.03em;
+  min-width: 76px;
+  text-align: right;
+}
+
+.durationBillable {
+  color: #888;
+}
+
+.durationRunning {
+  color: #008080;
+}
+
+.playBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  color: #bbb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1px;
+  transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.playBtn:hover {
+  background: #008080;
+  border-color: #008080;
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.playBtnSpacer {
+  width: 30px;
+  flex-shrink: 0;
+}
+
+/* ── Empty / loading ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 5rem 2rem;
+  color: #bbb;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.emptyState p { margin: 0; }
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: #bbb;
+  font-size: 0.875rem;
+}

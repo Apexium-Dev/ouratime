@@ -16,9 +16,7 @@
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2rem 0 0;
   height: 100%;
   display: flex;
   align-items: center;
@@ -27,12 +25,15 @@
 
 /* ── User ── */
 .user {
+  width: 220px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 0 1.25rem 0 1.75rem;
+  border-right: 1px solid #ece9e6;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  flex-shrink: 0;
-  padding-right: 1.75rem;
-  border-right: 1px solid #ece9e6;
+  height: 100%;
 }
 
 .avatar {
@@ -75,6 +76,7 @@
   line-height: 1;
 }
 
+
 /* ── Timer section ── */
 .timerSection {
   flex: 1;
@@ -116,22 +118,107 @@
   cursor: not-allowed;
 }
 
-/* ── Suggestions dropdown ── */
-.suggestions {
+/* ── Entry panel (rich popup from input) ── */
+.entryPanel {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   left: 0;
   right: 0;
   background: #fff;
   border: 1px solid #e2e0de;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  padding: 0.375rem;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   z-index: 100;
-  max-height: 240px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
+.panelBlock {
+  padding: 0.75rem 0.75rem 0.625rem;
+}
+
+.panelLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #bbb;
+  margin: 0 0 0.5rem 0.125rem;
+}
+
+.panelDivider {
+  height: 1px;
+  background: #f0eeec;
+  margin: 0;
+}
+
+/* ── Project chips ── */
+.projectChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.projectChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 30px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #444;
+  background: #F6F5F4;
+  border: 1.5px solid #e2e0de;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.projectChip:hover {
+  background: #eeecea;
+  border-color: #ccc;
+}
+
+.projectChipActive {
+  font-weight: 600;
+}
+
+.projectChipNone {
+  color: #888;
+}
+
+.projectChipCreate {
+  color: #008080;
+  font-weight: 600;
+  border-style: dashed;
+}
+
+.projectChipCreate:hover {
+  background: rgba(0, 128, 128, 0.06);
+  border-color: #008080;
+}
+
+.projectChipDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.projectChipDotEmpty {
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  border: 1.5px solid #ccc;
+  flex-shrink: 0;
+}
+
+/* ── Suggestion rows (task list inside panel) ── */
 .suggestionsLabel {
   font-size: 0.7rem;
   font-weight: 700;
@@ -143,10 +230,9 @@
 }
 
 .suggestionsEmpty {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #bbb;
-  padding: 0.625rem;
-  text-align: center;
+  padding: 0.25rem 0.125rem 0.375rem;
   margin: 0;
 }
 
@@ -162,7 +248,7 @@
   color: #333;
   background: none;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   text-align: left;
   transition: background 0.12s;

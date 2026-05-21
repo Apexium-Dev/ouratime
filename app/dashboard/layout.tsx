@@ -1,10 +1,16 @@
 import { DashboardNavbar } from "@/components/DashboardNavbar";
+import { DashboardSidebar } from "@/components/DashboardSidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#F6F5F4" }}>
+    <div style={{ minHeight: "100vh", background: "#F6F5F4" }}>
       <DashboardNavbar />
-      {children}
+      <div style={{ display: "flex" }}>
+        <DashboardSidebar />
+        <main style={{ flex: 1, minWidth: 0 }}>
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
