@@ -6,6 +6,8 @@ Run these in order in **Supabase Dashboard → SQL Editor → New query**.
 |------|-------------|--------|
 | `migrations/001_create_profiles.sql` | Profiles table, RLS policies, signup trigger | ✅ Run this |
 | `migrations/002_profiles_analytics.sql` | Analytics timestamps on profiles | ✅ Run this |
+| `migrations/003_projects_tasks_entries.sql` | Projects, Tasks, Time Entries tables | ✅ Run this |
+| `migrations/004_tags.sql` | Tags + time_entry_tags junction table | ✅ Run this |
 
 ## How to run
 
