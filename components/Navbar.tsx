@@ -17,30 +17,33 @@ const appLinks = [
 
 const marketingLinks = [
   { href: "/#features", label: "Features" },
-  { href: "/#pricing", label: "Pricing" },
+  { href: "/#method", label: "About" },
 ];
 
 export function Navbar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
-
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_, session) => {
       setUser(session?.user ?? null);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => setDropdownOpen(false), [pathname]);
+
   useEffect(() => {
-    setDropdownOpen(false);
-  }, [pathname]);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -60,46 +63,43 @@ export function Navbar() {
   const links = user ? appLinks : marketingLinks;
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ""}`}>
       <div className={styles.container}>
-        {/* Left */}
-        <ul className={styles.navLinks}>
-          {links.map(({ href, label }) => (
-            <li key={href}>
-              <Link
-                href={href}
-                className={`${styles.navLink} ${pathname === href ? styles.navLinkActive : ""}`}
-              >
-                {label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {/* Left: logo + links */}
+        <div className={styles.left}>
+          <Link href="/" className={styles.logo}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="OurATime" height={28} />
+          </Link>
+          <ul className={styles.navLinks}>
+            {links.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`${styles.navLink} ${pathname === href ? styles.navLinkActive : ""}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        {/* Center */}
-        <Link href="/" className={styles.logo}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="OurATime" height={34} />
-        </Link>
-
-        {/* Right */}
-        <div className={styles.actions}>
+        {/* Right: auth */}
+        <div className={styles.right}>
           {user ? (
             <div className={styles.userMenu} ref={dropdownRef}>
               <button
                 className={styles.avatar}
-                onClick={() => setDropdownOpen((prev) => !prev)}
+                onClick={() => setDropdownOpen((p) => !p)}
                 aria-label="User menu"
               >
                 {user.email?.[0].toUpperCase()}
               </button>
-
               {dropdownOpen && (
                 <div className={styles.dropdown}>
                   <span className={styles.dropdownEmail}>{user.email}</span>
-                  <Link href="/settings" className={styles.dropdownItem}>
-                    Settings
-                  </Link>
+                  <Link href="/settings" className={styles.dropdownItem}>Settings</Link>
                   <button
                     onClick={handleLogout}
                     className={`${styles.dropdownItem} ${styles.dropdownItemDanger}`}
@@ -110,14 +110,15 @@ export function Navbar() {
               )}
             </div>
           ) : (
-            <div className={styles.authButtons}>
-              <Link href="/login" className={styles.loginBtn}>
-                Sign in
-              </Link>
+            <>
+              <Link href="/login" className={styles.loginBtn}>Sign in</Link>
               <Link href="/signup" className={styles.signupBtn}>
-                Get started →
+                Get started
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
               </Link>
-            </div>
+            </>
           )}
         </div>
       </div>
