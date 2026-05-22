@@ -31,7 +31,7 @@ export default async function InvitePage({ params }: { params: { token: string }
           <span className={styles.projectName}>{project.name}</span>
         </div>
 
-        <h1 className={styles.heading}>You've been invited</h1>
+        <h1 className={styles.heading}>You&apos;ve been invited</h1>
         <p className={styles.sub}>
           Request to join <strong>{project.name}</strong>.{" "}
           The project owner will approve your request.
