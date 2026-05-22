@@ -113,7 +113,6 @@ export default function ProjectDetailPage() {
     if (!isAdmin) return;
     const { data, error } = await supabase.rpc("get_pending_invites", { p_project_id: id });
     if (error) console.error("get_pending_invites error:", error);
-    console.log("get_pending_invites data:", data);
     setPending(data ?? []);
   }, [id, isAdmin]);
 
