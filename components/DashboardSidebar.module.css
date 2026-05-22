@@ -20,6 +20,22 @@
   flex: 1;
 }
 
+/* Draggable wrapper */
+.navItem {
+  position: relative;
+  border-radius: 9px;
+  border-top: 2px solid transparent;
+  transition: border-color 0.1s;
+}
+
+.navItemDropTarget {
+  border-top-color: #008080;
+}
+
+.navItemDragging {
+  opacity: 0.4;
+}
+
 .item {
   display: flex;
   align-items: center;
@@ -32,6 +48,8 @@
   border-radius: 9px;
   text-decoration: none;
   transition: background 0.12s, color 0.12s;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .item:hover {
@@ -49,6 +67,21 @@
   background: rgba(0, 128, 128, 0.13);
   color: #006666;
 }
+
+/* Drag handle — shown on hover */
+.dragHandle {
+  opacity: 0;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: grab;
+  margin-right: -4px;
+  transition: opacity 0.15s;
+}
+
+.navItem:hover .dragHandle { opacity: 1; }
+.navItemDragging .dragHandle { opacity: 0; }
 
 /* ── Bottom section ── */
 .bottom {

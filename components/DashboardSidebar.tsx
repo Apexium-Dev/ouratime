@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { loadSidebarConfig, saveSidebarConfig, type SidebarEntry } from "@/lib/sidebarConfig";
 import styles from "./DashboardSidebar.module.css";
 
 const NAV = [
@@ -19,8 +21,22 @@ const NAV = [
     ),
   },
   {
+    href: "/dashboard/calendar",
+    label: "Calendar",
+    exact: false,
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    ),
+  },
+  {
     href: "/dashboard/timesheet",
     label: "Timesheet",
+    exact: false,
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -34,6 +50,7 @@ const NAV = [
   {
     href: "/dashboard/reports",
     label: "Reports",
+    exact: false,
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="18" y1="20" x2="18" y2="10" />
@@ -46,6 +63,7 @@ const NAV = [
   {
     href: "/dashboard/projects",
     label: "Projects",
+    exact: false,
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
@@ -55,6 +73,7 @@ const NAV = [
   {
     href: "/dashboard/tags",
     label: "Tags",
+    exact: false,
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
@@ -66,27 +85,89 @@ const NAV = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const [config, setConfig] = useState<SidebarEntry[]>(
+    NAV.map(n => ({ href: n.href, visible: true }))
+  );
+  const dragHref = useRef<string | null>(null);
+  const [dropHref, setDropHref] = useState<string | null>(null);
+
+  useEffect(() => {
+    setConfig(loadSidebarConfig());
+    const handler = () => setConfig(loadSidebarConfig());
+    window.addEventListener("ouratime:sidebar-changed", handler);
+    return () => window.removeEventListener("ouratime:sidebar-changed", handler);
+  }, []);
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
 
+  const handleDrop = (targetHref: string) => {
+    const from = dragHref.current;
+    if (!from || from === targetHref) return;
+
+    const next = [...config];
+    const fromIdx = next.findIndex(e => e.href === from);
+    const toIdx   = next.findIndex(e => e.href === targetHref);
+    const [item]  = next.splice(fromIdx, 1);
+    next.splice(fromIdx < toIdx ? toIdx - 1 : toIdx, 0, item);
+
+    dragHref.current = null;
+    setDropHref(null);
+    setConfig(next);
+    saveSidebarConfig(next);
+  };
+
+  const visibleNav = config
+    .filter(e => e.visible)
+    .map(e => NAV.find(n => n.href === e.href))
+    .filter(Boolean) as typeof NAV;
+
   return (
     <aside className={styles.sidebar}>
-      {/* Main nav */}
       <nav className={styles.nav}>
-        {NAV.map((item) => (
-          <Link
+        {visibleNav.map((item) => (
+          <div
             key={item.href}
-            href={item.href}
-            className={`${styles.item} ${isActive(item.href, item.exact) ? styles.itemActive : ""}`}
+            className={[
+              styles.navItem,
+              dropHref === item.href && dragHref.current !== item.href ? styles.navItemDropTarget : "",
+            ].join(" ")}
+            draggable
+            onDragStart={(e) => {
+              dragHref.current = item.href;
+              e.dataTransfer.effectAllowed = "move";
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+              if (dropHref !== item.href) setDropHref(item.href);
+            }}
+            onDragLeave={() => setDropHref(null)}
+            onDrop={(e) => { e.preventDefault(); handleDrop(item.href); }}
+            onDragEnd={() => { dragHref.current = null; setDropHref(null); }}
           >
-            {item.icon}
-            {item.label}
-          </Link>
+            <Link
+              href={item.href}
+              className={`${styles.item} ${isActive(item.href, item.exact) ? styles.itemActive : ""}`}
+              draggable={false}
+            >
+              <span className={styles.dragHandle}>
+                <svg width="9" height="14" viewBox="0 0 9 14" fill="currentColor">
+                  <circle cx="2" cy="2"  r="1.4" />
+                  <circle cx="7" cy="2"  r="1.4" />
+                  <circle cx="2" cy="7"  r="1.4" />
+                  <circle cx="7" cy="7"  r="1.4" />
+                  <circle cx="2" cy="12" r="1.4" />
+                  <circle cx="7" cy="12" r="1.4" />
+                </svg>
+              </span>
+              {item.icon}
+              {item.label}
+            </Link>
+          </div>
         ))}
       </nav>
 
-      {/* Bottom */}
       <div className={styles.bottom}>
         <Link
           href="/dashboard/settings"

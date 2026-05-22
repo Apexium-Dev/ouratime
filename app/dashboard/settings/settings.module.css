@@ -11,11 +11,24 @@
   margin: 0 0 2rem;
 }
 
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
 .card {
   background: #fff;
   border: 1px solid #ece9e6;
   border-radius: 14px;
   padding: 1.75rem;
+}
+
+.cardTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .sectionTitle {
@@ -28,10 +41,11 @@
 .sectionDesc {
   font-size: 0.875rem;
   color: #888;
-  margin: 0 0 1.5rem;
+  margin: 0 0 1.25rem;
   line-height: 1.5;
 }
 
+/* ── Billing form ── */
 .form {
   display: flex;
   flex-direction: column;
@@ -47,7 +61,6 @@
 .inputWrap {
   display: flex;
   align-items: center;
-  gap: 0;
   width: fit-content;
   background: #F6F5F4;
   border: 1.5px solid #e2e0de;
@@ -119,20 +132,71 @@
   box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
 }
 
-.saveBtn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
+.saveBtn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.error {
-  font-size: 0.875rem;
-  color: #dc2626;
-  margin: 0;
-}
+.error   { font-size: 0.875rem; color: #dc2626; margin: 0; }
+.success { font-size: 0.875rem; color: #008080; font-weight: 600; margin: 0; }
 
-.success {
-  font-size: 0.875rem;
-  color: #008080;
+/* ── Sidebar visibility list ── */
+.resetBtn {
+  height: 30px;
+  padding: 0 0.875rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  margin: 0;
+  font-family: inherit;
+  color: #888;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+  margin-top: 0.1rem;
 }
+
+.resetBtn:hover { background: #eeecea; color: #444; }
+
+.sidebarList {
+  border: 1px solid #ece9e6;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sidebarRow {
+  display: flex;
+  align-items: center;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #f5f3f1;
+  transition: background 0.1s;
+}
+
+.sidebarRow:last-child { border-bottom: none; }
+.sidebarRow:hover { background: #fdfcfb; }
+.sidebarRowHidden { opacity: 0.4; }
+
+.sidebarLabel {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.sidebarToggle {
+  width: 32px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.sidebarToggleOn  { background: rgba(0, 128, 128, 0.08); color: #008080; }
+.sidebarToggleOff { background: #F6F5F4; color: #bbb; }
+
+.sidebarToggleOn:hover:not(:disabled)  { background: rgba(0, 128, 128, 0.15); }
+.sidebarToggleOff:hover:not(:disabled) { background: #eeecea; color: #888; }
+.sidebarToggle:disabled { opacity: 0.35; cursor: not-allowed; }
