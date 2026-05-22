@@ -5,6 +5,7 @@ export const NAV_ITEMS = [
   { href: "/dashboard/reports",   label: "Reports",    exact: false },
   { href: "/dashboard/projects",  label: "Projects",   exact: false },
   { href: "/dashboard/tags",      label: "Tags",       exact: false },
+  { href: "/dashboard/team",      label: "Team",       exact: false },
 ] as const;
 
 export type NavHref = (typeof NAV_ITEMS)[number]["href"];
