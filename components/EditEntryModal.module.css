@@ -1,0 +1,377 @@
+/* ── Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Modal card ── */
+.modal {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(5, 5, 5, 0.18);
+  width: 100%;
+  max-width: 540px;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #050505;
+  margin: 0;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s;
+}
+
+.closeBtn:hover {
+  background: #f5f3f1;
+  color: #444;
+}
+
+/* ── Body ── */
+.body {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Field ── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #008080;
+}
+
+.input {
+  width: 100%;
+  padding: 0.6rem 0.875rem;
+  border: 1px solid #e5e2de;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: #050505;
+  background: #fafaf9;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #008080;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+  background: #fff;
+}
+
+.inputSm {
+  font-size: 0.8125rem;
+  padding: 0.45rem 0.75rem;
+}
+
+/* ── Chips (project / tag selector) ── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e2de;
+  background: #fafaf9;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, color 0.12s;
+  font-family: inherit;
+}
+
+.chip:hover {
+  border-color: #ccc;
+  color: #333;
+}
+
+.chipSelected {
+  border-color: #008080;
+  background: rgba(0, 128, 128, 0.08);
+  color: #008080;
+}
+
+.chipTagActive {
+  font-weight: 700;
+}
+
+.chipDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chipDotEmpty {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+.noTags {
+  font-size: 0.8rem;
+  color: #ccc;
+}
+
+/* ── Time row ── */
+.timeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.timeGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.timeSubLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #aaa;
+}
+
+.timeInput {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e2de;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  background: #fafaf9;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  width: 108px;
+}
+
+.timeInput:focus {
+  border-color: #008080;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+  background: #fff;
+}
+
+.timeSep {
+  color: #ccc;
+  margin-top: 1.2rem;
+  font-size: 1.1rem;
+}
+
+.durDisplay {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #444;
+  padding: 0 0.25rem;
+}
+
+.runningBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #008080;
+  background: rgba(0, 128, 128, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+}
+
+/* ── Billable toggle ── */
+.billableBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e2de;
+  background: #fafaf9;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+
+.billableBtn:hover {
+  border-color: #ccc;
+  color: #666;
+}
+
+.billableBtnOn {
+  border-color: rgba(0, 128, 128, 0.35);
+  background: rgba(0, 128, 128, 0.08);
+  color: #008080;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid #f0eeed;
+  gap: 0.5rem;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.deleteBtn {
+  padding: 0.45rem 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid #fcc;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #e55;
+  cursor: pointer;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+
+.deleteBtn:hover {
+  background: #fff0f0;
+  border-color: #e55;
+}
+
+.deleteBtnConfirm {
+  background: #e55;
+  border-color: #e55;
+  color: #fff;
+}
+
+.deleteBtnConfirm:hover {
+  background: #c44;
+  border-color: #c44;
+}
+
+.cancelDeleteBtn {
+  padding: 0.45rem 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e2de;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cancelDeleteBtn:hover {
+  border-color: #ccc;
+  color: #444;
+}
+
+.cancelBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #e5e2de;
+  background: transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+
+.cancelBtn:hover {
+  border-color: #ccc;
+  color: #444;
+}
+
+.saveBtn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  border: none;
+  background: #008080;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.12s, transform 0.1s;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: #006666;
+  transform: scale(1.02);
+}
+
+.saveBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
