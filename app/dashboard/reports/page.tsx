@@ -491,9 +491,7 @@ export default function ReportsPage() {
             </div>
             <div className={styles.statCard}>
               <p className={styles.statLbl}>Entries</p>
-              <p className={styles.statVal}>
-                {entries.length}
-              </p>
+              <p className={styles.statVal}>{entries.length}</p>
             </div>
           </div>
 

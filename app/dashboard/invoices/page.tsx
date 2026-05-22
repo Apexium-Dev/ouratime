@@ -163,9 +163,7 @@ export default function InvoicesPage() {
         </div>
         <div className={styles.statCard}>
           <p className={styles.statLbl}>Total invoices</p>
-          <p className={styles.statVal}>
-            {invoices.length}
-          </p>
+          <p className={styles.statVal}>{invoices.length}</p>
         </div>
       </div>
 
