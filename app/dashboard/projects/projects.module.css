@@ -217,6 +217,36 @@
 .actionBtnOn:hover     { background: #e6f2f2 !important; color: #006666 !important; }
 .actionBtnDelete:hover { background: #fef2f2 !important; color: #dc2626 !important; }
 
+/* ── Card description + tags ── */
+.cardDesc {
+  font-size: 0.8125rem;
+  color: #888;
+  margin: 0;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.cardTag {
+  height: 20px;
+  padding: 0 0.5rem;
+  background: #f0efed;
+  color: #888;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+
 /* ── Stats ── */
 .statsRow {
   display: flex;

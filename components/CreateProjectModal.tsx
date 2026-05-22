@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./CreateProjectModal.module.css";
 
@@ -17,16 +17,34 @@ interface Props {
 export function CreateProjectModal({ onClose, onCreate }: Props) {
   const [name, setName] = useState("");
   const [color, setColor] = useState(PRESET_COLORS[0]);
+  const [description, setDescription] = useState("");
+  const [tagInput, setTagInput] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: globalThis.KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  const addTag = () => {
+    const t = tagInput.trim().toLowerCase();
+    if (t && !tags.includes(t)) setTags(prev => [...prev, t]);
+    setTagInput("");
+  };
+
+  const onTagKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") { e.preventDefault(); addTag(); }
+    if (e.key === "Backspace" && !tagInput && tags.length > 0) {
+      setTags(prev => prev.slice(0, -1));
+    }
+  };
+
+  const removeTag = (t: string) => setTags(prev => prev.filter(x => x !== t));
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -39,7 +57,13 @@ export function CreateProjectModal({ onClose, onCreate }: Props) {
 
     const { data, error: dbError } = await supabase
       .from("projects")
-      .insert({ user_id: user.id, name: name.trim(), color })
+      .insert({
+        user_id: user.id,
+        name: name.trim(),
+        color,
+        description: description.trim(),
+        tags,
+      })
       .select()
       .single();
 
@@ -88,6 +112,38 @@ export function CreateProjectModal({ onClose, onCreate }: Props) {
                   aria-label={c}
                 />
               ))}
+            </div>
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Description <span className={styles.optional}>(optional)</span></label>
+            <textarea
+              className={styles.textarea}
+              placeholder="What is this project about?"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={2}
+            />
+          </div>
+
+          <div className={styles.field}>
+            <label className={styles.label}>Tags <span className={styles.optional}>(optional)</span></label>
+            <div className={styles.tagBox}>
+              {tags.map(t => (
+                <span key={t} className={styles.tag}>
+                  {t}
+                  <button type="button" className={styles.tagRemove} onClick={() => removeTag(t)}>×</button>
+                </span>
+              ))}
+              <input
+                className={styles.tagInput}
+                type="text"
+                placeholder={tags.length === 0 ? "Add tag, press Enter" : ""}
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyDown={onTagKeyDown}
+                onBlur={addTag}
+              />
             </div>
           </div>
 

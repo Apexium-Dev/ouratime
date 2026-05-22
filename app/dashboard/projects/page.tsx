@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { CreateProjectModal } from "@/components/CreateProjectModal";
 import styles from "./projects.module.css";
@@ -20,6 +21,8 @@ interface Project {
   id: string;
   name: string;
   color: string;
+  description: string;
+  tags: string[];
   created_at: string;
   archived: boolean;
   is_template: boolean;
@@ -30,6 +33,7 @@ interface Stats {
   tasks: number;
   totalSecs: number;
   weekSecs: number;
+  members: number;
 }
 
 type Tab = "active" | "favorites" | "templates" | "archived";
@@ -47,6 +51,7 @@ function startOfWeek() {
 }
 
 export default function ProjectsPage() {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [stats, setStats] = useState<Record<string, Stats>>({});
   const [loading, setLoading] = useState(true);
@@ -67,7 +72,7 @@ export default function ProjectsPage() {
     window.dispatchEvent(new CustomEvent("ouratime:projects-changed"));
 
   const load = useCallback(async () => {
-    const [{ data: proj }, { data: entries }, { data: tasks }] =
+    const [{ data: proj }, { data: entries }, { data: tasks }, { data: memberRows }] =
       await Promise.all([
         supabase
           .from("projects")
@@ -78,6 +83,7 @@ export default function ProjectsPage() {
           .from("time_entries")
           .select("project_id, duration, started_at"),
         supabase.from("tasks").select("project_id"),
+        supabase.from("project_members").select("project_id").eq("status", "active"),
       ]);
     setProjects(proj ?? []);
     const monday = startOfWeek();
@@ -90,6 +96,7 @@ export default function ProjectsPage() {
         weekSecs: pe
           .filter((e) => new Date(e.started_at) >= monday)
           .reduce((s, e) => s + (e.duration ?? 0), 0),
+        members: (memberRows ?? []).filter((m) => m.project_id === p.id).length,
       };
     }
     setStats(map);
@@ -391,7 +398,11 @@ export default function ProjectsPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className={styles.cardBody}>
+                  <div
+                    className={styles.cardBody}
+                    onClick={() => router.push(`/dashboard/projects/${project.id}`)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <div className={styles.cardTop}>
                       <div className={styles.projectName}>
                         <span
@@ -406,7 +417,7 @@ export default function ProjectsPage() {
                         )}
                       </div>
 
-                      <div className={styles.actions}>
+                      <div className={styles.actions} onClick={e => e.stopPropagation()}>
                         {/* Favorite */}
                         <button
                           className={`${styles.actionBtn} ${project.is_favorite ? styles.actionBtnFavOn : ""}`}
@@ -541,11 +552,21 @@ export default function ProjectsPage() {
                       </div>
                     </div>
 
+                    {project.description && (
+                      <p className={styles.cardDesc}>{project.description}</p>
+                    )}
+                    {project.tags?.length > 0 && (
+                      <div className={styles.cardTags}>
+                        {project.tags.map(tag => (
+                          <span key={tag} className={styles.cardTag}>{tag}</span>
+                        ))}
+                      </div>
+                    )}
                     <div className={styles.statsRow}>
                       <div className={styles.stat}>
-                        <span className={styles.statVal}>{s.tasks}</span>
+                        <span className={styles.statVal}>{s.members}</span>
                         <span className={styles.statLbl}>
-                          {s.tasks === 1 ? "task" : "tasks"}
+                          {s.members === 1 ? "member" : "members"}
                         </span>
                       </div>
                       <div className={styles.statDivider} />
@@ -588,8 +609,10 @@ export default function ProjectsPage() {
         <CreateProjectModal
           onClose={() => setShowModal(false)}
           onCreate={(p) => {
-            const full = {
+            const full: Project = {
               ...p,
+              description: (p as any).description ?? "",
+              tags: (p as any).tags ?? [],
               created_at: new Date().toISOString(),
               archived: false,
               is_template: false,
@@ -599,7 +622,7 @@ export default function ProjectsPage() {
             setProjects((prev) => [...prev, full]);
             setStats((prev) => ({
               ...prev,
-              [p.id]: { tasks: 0, totalSecs: 0, weekSecs: 0 },
+              [p.id]: { tasks: 0, totalSecs: 0, weekSecs: 0, members: 1 },
             }));
             notify();
           }}
