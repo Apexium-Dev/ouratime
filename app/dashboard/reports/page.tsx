@@ -492,7 +492,7 @@ export default function ReportsPage() {
             <div className={styles.statCard}>
               <p className={styles.statLbl}>Entries</p>
               <p className={styles.statVal}>
-                {String(entries.length).padStart(2, "0")}
+                {entries.length}
               </p>
             </div>
           </div>

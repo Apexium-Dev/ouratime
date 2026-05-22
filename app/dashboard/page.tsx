@@ -209,9 +209,7 @@ export default function DashboardPage() {
 
           <div className={styles.card}>
             <p className={styles.statLabel}>Active Projects</p>
-            <p className={styles.statValue}>
-              {String(activeProjects).padStart(2, "0")}
-            </p>
+            <p className={styles.statValue}>{activeProjects}</p>
           </div>
         </div>
 
