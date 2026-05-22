@@ -97,8 +97,34 @@ export default function InvoicesPage() {
   const handleDelete = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (!confirm("Delete this invoice? This cannot be undone.")) return;
-    const { error } = await supabase.from("invoices").delete().eq("id", id);
-    if (!error) setInvoices((prev) => prev.filter((i) => i.id !== id));
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      alert("You must be logged in to delete invoices.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("invoices")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    if (error) {
+      alert("Failed to delete invoice: " + error.message);
+      return;
+    }
+
+    // Re-fetch from DB to confirm deletion actually happened
+    const { data } = await supabase
+      .from("invoices")
+      .select(
+        "id, number, client_name, client_email, status, issue_date, due_date, currency, tax_rate, invoice_items(quantity, rate)",
+      )
+      .order("created_at", { ascending: false });
+    setInvoices((data as Invoice[]) ?? []);
   };
 
   const filtered =
