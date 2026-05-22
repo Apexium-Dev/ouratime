@@ -8,11 +8,7 @@ import { supabase } from "@/lib/supabase";
 import styles from "./Navbar.module.css";
 
 const appLinks = [
-  { href: "/timer", label: "Timer" },
-  { href: "/timesheet", label: "Timesheet" },
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/reports", label: "Reports" },
-  { href: "/projects", label: "Projects" },
 ];
 
 const marketingLinks = [

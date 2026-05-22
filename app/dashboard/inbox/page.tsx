@@ -48,7 +48,13 @@ export default function InboxPage() {
 
   async function respondInvite(id: string, accept: boolean) {
     setActing(id);
-    await supabase.rpc("respond_to_invite", { p_notification_id: id, p_accept: accept });
+    const { error } = await supabase.rpc("respond_to_invite", { p_notification_id: id, p_accept: accept });
+    if (error) {
+      console.error("respond_to_invite error:", error);
+      alert(`Failed to ${accept ? "accept" : "decline"} invite: ${error.message}`);
+      setActing(null);
+      return;
+    }
     setItems(prev => prev.map(n => n.id === id
       ? { ...n, status: accept ? "accepted" : "declined" }
       : n
@@ -59,7 +65,13 @@ export default function InboxPage() {
 
   async function respondJoin(id: string, approve: boolean) {
     setActing(id);
-    await supabase.rpc("respond_to_join_request", { p_notification_id: id, p_approve: approve });
+    const { error } = await supabase.rpc("respond_to_join_request", { p_notification_id: id, p_approve: approve });
+    if (error) {
+      console.error("respond_to_join_request error:", error);
+      alert(`Failed to ${approve ? "approve" : "deny"} request: ${error.message}`);
+      setActing(null);
+      return;
+    }
     setItems(prev => prev.map(n => n.id === id
       ? { ...n, status: approve ? "accepted" : "declined" }
       : n
