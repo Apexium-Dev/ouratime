@@ -33,7 +33,9 @@
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
 }
 
 .newBtn:hover:not(:disabled) {
@@ -41,7 +43,10 @@
   box-shadow: 0 4px 12px rgba(0, 128, 128, 0.28);
 }
 
-.newBtn:disabled { opacity: 0.55; cursor: not-allowed; }
+.newBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
 
 /* ── Stats ── */
 .statsRow {
@@ -75,15 +80,19 @@
   font-variant-numeric: tabular-nums;
 }
 
-.teal   { color: #008080; }
-.orange { color: #e07b2a; }
+.teal {
+  color: #008080;
+}
+.orange {
+  color: #e07b2a;
+}
 
 /* ── Filter tabs ── */
 .filterTabs {
   display: flex;
   gap: 0.25rem;
   margin-bottom: 1.5rem;
-  background: #F6F5F4;
+  background: #f6f5f4;
   border-radius: 12px;
   padding: 0.3rem;
   width: fit-content;
@@ -105,7 +114,9 @@
   transition: color 0.12s;
 }
 
-.filterTab:hover { color: #444; }
+.filterTab:hover {
+  color: #444;
+}
 
 .filterTabActive {
   background: #fff;
@@ -150,8 +161,13 @@
   font-size: 0.9375rem;
 }
 
-.emptyState p { margin: 0; }
-.emptyState p:first-of-type { color: #666; font-weight: 600; }
+.emptyState p {
+  margin: 0;
+}
+.emptyState p:first-of-type {
+  color: #666;
+  font-weight: 600;
+}
 
 /* ── Table ── */
 .table {
@@ -163,10 +179,10 @@
 
 .tableHead {
   display: grid;
-  grid-template-columns: 140px 1fr 110px 110px 130px 100px;
+  grid-template-columns: 140px 1fr 110px 110px 130px 100px 44px;
   align-items: center;
   padding: 0.625rem 1.25rem;
-  background: #F6F5F4;
+  background: #f6f5f4;
   border-bottom: 1px solid #ece9e6;
   font-size: 0.75rem;
   font-weight: 700;
@@ -177,7 +193,7 @@
 
 .tableRow {
   display: grid;
-  grid-template-columns: 140px 1fr 110px 110px 130px 100px;
+  grid-template-columns: 140px 1fr 110px 110px 130px 100px 44px;
   align-items: center;
   padding: 0.875rem 1.25rem;
   border-bottom: 1px solid #f5f3f1;
@@ -185,8 +201,12 @@
   transition: background 0.1s;
 }
 
-.tableRow:last-child { border-bottom: none; }
-.tableRow:hover { background: #fdfcfb; }
+.tableRow:last-child {
+  border-bottom: none;
+}
+.tableRow:hover {
+  background: #fdfcfb;
+}
 
 .invNumber {
   font-size: 0.875rem;
@@ -225,7 +245,10 @@
   font-variant-numeric: tabular-nums;
 }
 
-.overdue { color: #dc2626; font-weight: 600; }
+.overdue {
+  color: #dc2626;
+  font-weight: 600;
+}
 
 .amountCell {
   font-size: 0.9rem;
@@ -248,7 +271,42 @@
   width: fit-content;
 }
 
-.status_draft   { background: #F6F5F4; color: #888; }
-.status_sent    { background: rgba(59,130,246,0.1); color: #3b82f6; }
-.status_paid    { background: rgba(0,128,128,0.1); color: #008080; }
-.status_overdue { background: rgba(220,38,38,0.1); color: #dc2626; }
+.status_draft {
+  background: #f6f5f4;
+  color: #888;
+}
+.status_sent {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+.status_paid {
+  background: rgba(0, 128, 128, 0.1);
+  color: #008080;
+}
+.status_overdue {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+/* ── Delete button ── */
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    color 0.12s;
+  justify-self: end;
+}
+
+.deleteBtn:hover {
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+}

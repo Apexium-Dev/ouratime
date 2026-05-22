@@ -94,6 +94,13 @@ export default function InvoicesPage() {
     if (!error && data) router.push(`/dashboard/invoices/${data.id}`);
   };
 
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm("Delete this invoice? This cannot be undone.")) return;
+    const { error } = await supabase.from("invoices").delete().eq("id", id);
+    if (!error) setInvoices((prev) => prev.filter((i) => i.id !== id));
+  };
+
   const filtered =
     filter === "all" ? invoices : invoices.filter((i) => i.status === filter);
 
@@ -219,6 +226,7 @@ export default function InvoicesPage() {
             <span>Due</span>
             <span style={{ textAlign: "right" }}>Amount</span>
             <span>Status</span>
+            <span />
           </div>
           {filtered.map((inv) => (
             <div
@@ -249,6 +257,27 @@ export default function InvoicesPage() {
               >
                 {STATUS_LABEL[inv.status]}
               </span>
+              <button
+                className={styles.deleteBtn}
+                onClick={(e) => handleDelete(e, inv.id)}
+                title="Delete invoice"
+              >
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                  <path d="M10 11v6M14 11v6" />
+                  <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
+                </svg>
+              </button>
             </div>
           ))}
         </div>
