@@ -11,7 +11,7 @@ interface Entry {
   duration: number | null;
   billable: boolean;
   project_id: string | null;
-  projects: { name: string; color: string } | null;
+  projects: { name: string; color: string; hourly_rate: number } | null;
 }
 
 interface ProjectSlice {
@@ -317,6 +317,15 @@ export default function ReportsPage() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [hovProject, setHovProject] = useState<string | null>(null);
+  const [profileRate, setProfileRate] = useState(0);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase.from("profiles").select("hourly_rate").eq("id", user.id).single();
+      setProfileRate(data?.hourly_rate ?? 0);
+    });
+  }, []);
 
   useEffect(() => {
     async function load() {
@@ -325,7 +334,7 @@ export default function ReportsPage() {
       const { data } = await supabase
         .from("time_entries")
         .select(
-          "id, started_at, stopped_at, duration, billable, project_id, projects(name,color)",
+          "id, started_at, stopped_at, duration, billable, project_id, projects(name,color,hourly_rate)",
         )
         .gte("started_at", from.toISOString())
         .lte("started_at", to.toISOString())
@@ -353,16 +362,20 @@ export default function ReportsPage() {
     load();
   }, [period]);
 
-  const { totalSecs, billableSecs, slices, bars } = useMemo(() => {
-    let totalSecs = 0,
-      billableSecs = 0;
-    const pMap: Record<string, { name: string; color: string; secs: number }> =
-      {};
+  const { totalSecs, billableSecs, billableAmount, avgDailySecs, slices, bars } = useMemo(() => {
+    let totalSecs = 0, billableSecs = 0, billableAmount = 0;
+    const pMap: Record<string, { name: string; color: string; secs: number }> = {};
+    const daySet = new Set<string>();
 
     for (const e of entries) {
       const s = e.duration ?? 0;
       totalSecs += s;
-      if (e.billable) billableSecs += s;
+      daySet.add(new Date(e.started_at).toDateString());
+      if (e.billable) {
+        billableSecs += s;
+        const rate = (e.projects?.hourly_rate ?? 0) > 0 ? e.projects!.hourly_rate : profileRate;
+        billableAmount += (s / 3600) * rate;
+      }
       const key = e.project_id ?? "__none__";
       if (!pMap[key])
         pMap[key] = {
@@ -417,42 +430,87 @@ export default function ReportsPage() {
       cur.setDate(cur.getDate() + 1);
     }
 
-    return { totalSecs, billableSecs, slices, bars };
-  }, [entries, period]);
+    const avgDailySecs = daySet.size > 0 ? totalSecs / daySet.size : 0;
+    return { totalSecs, billableSecs, billableAmount, avgDailySecs, slices, bars };
+  }, [entries, period, profileRate]);
 
-  const billPct =
-    totalSecs > 0 ? Math.round((billableSecs / totalSecs) * 100) : 0;
+  const billPct = totalSecs > 0 ? Math.round((billableSecs / totalSecs) * 100) : 0;
   const topSlice = slices[0];
   const isEmpty = !loading && entries.length === 0;
 
+  const STAT_KEYS = ["total","billable_time","billable_hours","amount","avg_daily","top_project","entries"] as const;
+  type StatKey = typeof STAT_KEYS[number];
+  const STAT_LABELS: Record<StatKey, string> = {
+    total: "Total tracked", billable_time: "Billable time", billable_hours: "Billable hours",
+    amount: "Amount", avg_daily: "Avg daily hours", top_project: "Top project", entries: "Entries",
+  };
+
+  const STATS_LS_KEY = "ouratime:reports-stats";
+  const [visibleStats, setVisibleStats] = useState<Record<StatKey, boolean>>(() => {
+    try {
+      const raw = typeof window !== "undefined" ? localStorage.getItem(STATS_LS_KEY) : null;
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    return { total: true, billable_time: true, billable_hours: true, amount: true, avg_daily: true, top_project: true, entries: true };
+  });
+  const [showCustomize, setShowCustomize] = useState(false);
+
+  function toggleStat(key: StatKey) {
+    setVisibleStats(prev => {
+      const next = { ...prev, [key]: !prev[key] };
+      localStorage.setItem(STATS_LS_KEY, JSON.stringify(next));
+      return next;
+    });
+  }
+
   return (
     <main className={styles.page}>
-      {/* ── Period tabs ── */}
-      <div className={styles.tabs}>
-        {PERIODS.map((p) => (
-          <button
-            key={p.key}
-            className={`${styles.tab} ${period === p.key ? styles.tabActive : ""}`}
-            onClick={() => setPeriod(p.key)}
-          >
-            {p.label}
+      {/* ── Top bar: period tabs + customize ── */}
+      <div className={styles.topBar}>
+        <div className={styles.tabs}>
+          {PERIODS.map((p) => (
+            <button
+              key={p.key}
+              className={`${styles.tab} ${period === p.key ? styles.tabActive : ""}`}
+              onClick={() => setPeriod(p.key)}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.customizeWrap}>
+          <button className={styles.customizeBtn} onClick={() => setShowCustomize(v => !v)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+            Customize
           </button>
-        ))}
+          {showCustomize && (
+            <div className={styles.customizeMenu}>
+              <div className={styles.customizeTitle}>Show / hide stats</div>
+              {STAT_KEYS.map(key => (
+                <label key={key} className={styles.customizeRow}>
+                  <input
+                    type="checkbox"
+                    checked={visibleStats[key]}
+                    onChange={() => toggleStat(key)}
+                    className={styles.customizeCheck}
+                  />
+                  <span>{STAT_LABELS[key]}</span>
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {loading ? (
         <div className={styles.loading}>Loading…</div>
       ) : isEmpty ? (
         <div className={styles.emptyState}>
-          <svg
-            width="44"
-            height="44"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#ddd"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          >
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5" strokeLinecap="round">
             <rect x="2" y="3" width="20" height="14" rx="2" />
             <path d="M8 21h8M12 17v4" />
             <path d="M7 8h4M7 11h6" />
@@ -464,35 +522,61 @@ export default function ReportsPage() {
         <>
           {/* ── Stats ── */}
           <div className={styles.statsRow}>
-            <div className={styles.statCard}>
-              <p className={styles.statLbl}>Total tracked</p>
-              <p className={`${styles.statVal} ${styles.teal}`}>
-                {fmtHHMM(totalSecs)}
-              </p>
-            </div>
-            <div className={styles.statCard}>
-              <p className={styles.statLbl}>Billable</p>
-              <p className={styles.statVal}>{fmtHHMM(billableSecs)}</p>
-              <p className={styles.statSub}>{billPct}% of total</p>
-            </div>
-            <div className={styles.statCard}>
-              <p className={styles.statLbl}>Top project</p>
-              {topSlice ? (
-                <p className={`${styles.statVal} ${styles.statValMd}`}>
-                  <span
-                    className={styles.topDot}
-                    style={{ background: topSlice.color }}
-                  />
-                  {topSlice.name}
+            {visibleStats.total && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Total tracked</p>
+                <p className={`${styles.statVal} ${styles.teal}`}>{fmtHHMM(totalSecs)}</p>
+              </div>
+            )}
+            {visibleStats.billable_time && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Billable time</p>
+                <p className={styles.statVal}>{fmtHHMM(billableSecs)}</p>
+                <p className={styles.statSub}>{billPct}% of total</p>
+              </div>
+            )}
+            {visibleStats.billable_hours && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Billable hours</p>
+                <p className={styles.statVal}>{fmtH(billableSecs)}</p>
+              </div>
+            )}
+            {visibleStats.amount && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Amount</p>
+                <p className={`${styles.statVal} ${styles.teal}`}>
+                  {billableAmount > 0 ? `$${billableAmount.toFixed(2)}` : "—"}
                 </p>
-              ) : (
-                <p className={styles.statVal}>—</p>
-              )}
-            </div>
-            <div className={styles.statCard}>
-              <p className={styles.statLbl}>Entries</p>
-              <p className={styles.statVal}>{entries.length}</p>
-            </div>
+                {profileRate === 0 && billableAmount === 0 && (
+                  <p className={styles.statSub}>Set rate in Settings</p>
+                )}
+              </div>
+            )}
+            {visibleStats.avg_daily && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Avg daily hours</p>
+                <p className={styles.statVal}>{fmtH(Math.round(avgDailySecs))}</p>
+              </div>
+            )}
+            {visibleStats.top_project && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Top project</p>
+                {topSlice ? (
+                  <p className={`${styles.statVal} ${styles.statValMd}`}>
+                    <span className={styles.topDot} style={{ background: topSlice.color }} />
+                    {topSlice.name}
+                  </p>
+                ) : (
+                  <p className={styles.statVal}>—</p>
+                )}
+              </div>
+            )}
+            {visibleStats.entries && (
+              <div className={styles.statCard}>
+                <p className={styles.statLbl}>Entries</p>
+                <p className={styles.statVal}>{entries.length}</p>
+              </div>
+            )}
           </div>
 
           {/* ── Charts ── */}
