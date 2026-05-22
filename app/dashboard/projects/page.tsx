@@ -13,6 +13,7 @@ const COLORS = [
 interface Project {
   id: string; name: string; color: string; created_at: string;
   archived: boolean; is_template: boolean; is_favorite: boolean;
+  hourly_rate: number;
 }
 interface Stats { tasks: number; totalSecs: number; weekSecs: number; }
 
@@ -39,6 +40,7 @@ export default function ProjectsPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName]   = useState("");
   const [editColor, setEditColor] = useState(COLORS[0]);
+  const [editRate, setEditRate]   = useState(0);
   const [saving, setSaving]       = useState(false);
 
   const [deletingId, setDeletingId]       = useState<string | null>(null);
@@ -81,16 +83,16 @@ export default function ProjectsPage() {
 
   // ── Edit ────────────────────────────────────────────────────
   const startEdit = (p: Project) => {
-    setEditingId(p.id); setEditName(p.name); setEditColor(p.color);
+    setEditingId(p.id); setEditName(p.name); setEditColor(p.color); setEditRate(p.hourly_rate ?? 0);
     setDeletingId(null); setDeleteError("");
   };
   const saveEdit = async (id: string) => {
     if (!editName.trim()) return;
     setSaving(true);
-    const { error } = await supabase.from("projects").update({ name: editName.trim(), color: editColor }).eq("id", id);
+    const { error } = await supabase.from("projects").update({ name: editName.trim(), color: editColor, hourly_rate: editRate }).eq("id", id);
     setSaving(false);
     if (!error) {
-      setProjects((prev) => prev.map((p) => p.id === id ? { ...p, name: editName.trim(), color: editColor } : p));
+      setProjects((prev) => prev.map((p) => p.id === id ? { ...p, name: editName.trim(), color: editColor, hourly_rate: editRate } : p));
       setEditingId(null);
       notify();
     }
@@ -202,6 +204,20 @@ export default function ProjectsPage() {
                           style={{ background: c }} onClick={() => setEditColor(c)} />
                       ))}
                     </div>
+                    <div className={styles.rateRow}>
+                      <label className={styles.rateLabel}>Hourly rate</label>
+                      <div className={styles.rateInputWrap}>
+                        <span className={styles.rateCurrency}>$</span>
+                        <input
+                          className={styles.rateInput}
+                          type="number" min="0" step="0.01"
+                          value={editRate}
+                          onChange={(e) => setEditRate(parseFloat(e.target.value) || 0)}
+                          placeholder="0"
+                        />
+                        <span className={styles.rateUnit}>/hr</span>
+                      </div>
+                    </div>
                     <div className={styles.rowActions}>
                       <button className={styles.cancelBtn} onClick={() => setEditingId(null)}>Cancel</button>
                       <button className={styles.saveBtn} onClick={() => saveEdit(project.id)} disabled={saving || !editName.trim()}>
@@ -312,6 +328,15 @@ export default function ProjectsPage() {
                         <span className={styles.statVal}>{fmtHHMM(s.totalSecs)}</span>
                         <span className={styles.statLbl}>total</span>
                       </div>
+                      {project.hourly_rate > 0 && (
+                        <>
+                          <div className={styles.statDivider} />
+                          <div className={styles.stat}>
+                            <span className={`${styles.statVal} ${styles.rateVal}`}>${project.hourly_rate}/hr</span>
+                            <span className={styles.statLbl}>rate</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 )}

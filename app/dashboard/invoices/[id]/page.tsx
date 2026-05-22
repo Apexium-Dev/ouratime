@@ -39,7 +39,7 @@ interface TimeEntry {
   stopped_at: string | null;
   duration: number | null;
   project_id: string | null;
-  projects: { name: string; color: string } | null;
+  projects: { name: string; color: string; hourly_rate: number } | null;
 }
 
 const CURRENCIES = ["USD","EUR","GBP","CAD","AUD","JPY","CHF","CNY","SEK","NOK","DKK","PLN","CZK","HUF","RON","BGN","HRK","RSD","UAH","TRY","BRL","MXN","ARS","CLP","COP","PEN","UYU","ZAR","EGP","NGN","KES","GHS","INR","PKR","BDT","LKR","NPR","THB","VND","IDR","MYR","PHP","SGD","HKD","TWD","KRW","AED","SAR","QAR","KWD","BHD","OMR","JOD","ILS","MAD","TND"];
@@ -188,7 +188,7 @@ export default function InvoiceEditorPage() {
     if (!user) { setImportLoading(false); return; }
     const { data } = await supabase
       .from("time_entries")
-      .select("id, description, started_at, stopped_at, duration, project_id, projects(name, color)")
+      .select("id, description, started_at, stopped_at, duration, project_id, projects(name, color, hourly_rate)")
       .eq("user_id", user.id)
       .not("stopped_at", "is", null)
       .order("started_at", { ascending: false })
@@ -210,17 +210,18 @@ export default function InvoiceEditorPage() {
     const toImport = timeEntries.filter(e => selectedEntries.has(e.id));
 
     // Group by project
-    const groups = new Map<string, { label: string; entries: TimeEntry[] }>();
+    const groups = new Map<string, { label: string; rate: number; entries: TimeEntry[] }>();
     for (const e of toImport) {
       const key = e.project_id ?? "__none__";
       const label = e.projects?.name ?? "No project";
-      if (!groups.has(key)) groups.set(key, { label, entries: [] });
+      const rate  = e.projects?.hourly_rate ?? 0;
+      if (!groups.has(key)) groups.set(key, { label, rate, entries: [] });
       groups.get(key)!.entries.push(e);
     }
 
     const newItems: InvoiceItem[] = [];
     let order = inv.invoice_items.length;
-    for (const [, { label, entries }] of groups) {
+    for (const [, { label, rate, entries }] of groups) {
       const totalSec = entries.reduce((s, e) => {
         if (e.duration) return s + e.duration;
         if (e.stopped_at) return s + Math.round((new Date(e.stopped_at).getTime() - new Date(e.started_at).getTime()) / 1000);
@@ -231,7 +232,7 @@ export default function InvoiceEditorPage() {
         id: crypto.randomUUID(),
         description: label,
         quantity: hours,
-        rate: 0,
+        rate,
         sort_order: order++,
         _new: true,
       };
@@ -552,6 +553,9 @@ export default function InvoiceEditorPage() {
                         )}
                         <span className={styles.entryDesc}>{e.description || "No description"}</span>
                         <span className={styles.entryProject}>{e.projects?.name ?? "No project"}</span>
+                        {(e.projects?.hourly_rate ?? 0) > 0 && (
+                          <span className={styles.entryRate}>${e.projects!.hourly_rate}/hr</span>
+                        )}
                         <span className={styles.entryDur}>{secToHHMM(dur)}</span>
                       </label>
                     );
