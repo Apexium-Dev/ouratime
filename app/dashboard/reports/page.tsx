@@ -24,59 +24,22 @@ interface ProjectSlice {
 
 const NO_PROJECT_COLOR = "#D4D0CC";
 const PERIODS = [
-  { key: "week", label: "This week" },
-  { key: "lastweek", label: "Last week" },
-  { key: "month", label: "This month" },
-  { key: "30d", label: "Last 30 days" },
-  { key: "3m", label: "Last 3 months" },
+  { key: "7d",     label: "Last 7 Days" },
+  { key: "30d",    label: "Last 30 Days" },
+  { key: "90d",    label: "Last 90 Days" },
+  { key: "custom", label: "Custom" },
 ] as const;
 type Period = (typeof PERIODS)[number]["key"];
 
 // ── Date helpers ─────────────────────────────────────────────────────────────
-function getPeriodRange(period: Period): { from: Date; to: Date } {
+function getPeriodRange(period: Exclude<Period, "custom">): { from: Date; to: Date } {
   const now = new Date();
-  const eod = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-    999,
-  );
-  switch (period) {
-    case "week": {
-      const d = new Date(eod);
-      d.setDate(d.getDate() - ((d.getDay() + 6) % 7));
-      return {
-        from: new Date(d.getFullYear(), d.getMonth(), d.getDate()),
-        to: eod,
-      };
-    }
-    case "lastweek": {
-      const d = new Date(eod);
-      d.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7);
-      const from = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      const to = new Date(from);
-      to.setDate(from.getDate() + 6);
-      to.setHours(23, 59, 59, 999);
-      return { from, to };
-    }
-    case "month":
-      return { from: new Date(eod.getFullYear(), eod.getMonth(), 1), to: eod };
-    case "3m": {
-      const from = new Date(eod);
-      from.setMonth(from.getMonth() - 3);
-      from.setHours(0, 0, 0, 0);
-      return { from, to: eod };
-    }
-    default: {
-      const from = new Date(eod);
-      from.setDate(from.getDate() - 29);
-      from.setHours(0, 0, 0, 0);
-      return { from, to: eod };
-    }
-  }
+  const eod = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  const days = period === "7d" ? 6 : period === "30d" ? 29 : 89;
+  const from = new Date(eod);
+  from.setDate(from.getDate() - days);
+  from.setHours(0, 0, 0, 0);
+  return { from, to: eod };
 }
 
 function fmtH(s: number) {
@@ -204,7 +167,7 @@ function BarChart({
 
   const step = cW / data.length;
   const bW = Math.max(3, step * 0.55);
-  const isWeek = period === "week" || period === "lastweek";
+  const isWeek = period === "7d";
   const every =
     data.length <= 7 ? 1 : data.length <= 14 ? 2 : data.length <= 31 ? 7 : 14;
 
@@ -313,7 +276,9 @@ function BarChart({
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function ReportsPage() {
-  const [period, setPeriod] = useState<Period>("week");
+  const [period, setPeriod] = useState<Period>("7d");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [hovProject, setHovProject] = useState<string | null>(null);
@@ -330,7 +295,16 @@ export default function ReportsPage() {
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const { from, to } = getPeriodRange(period);
+
+      let from: Date, to: Date;
+      if (period === "custom") {
+        if (!customFrom || !customTo) { setLoading(false); return; }
+        from = new Date(customFrom + "T00:00:00");
+        to   = new Date(customTo   + "T23:59:59.999");
+      } else {
+        ({ from, to } = getPeriodRange(period));
+      }
+
       const { data } = await supabase
         .from("time_entries")
         .select(
@@ -360,7 +334,7 @@ export default function ReportsPage() {
       setLoading(false);
     }
     load();
-  }, [period]);
+  }, [period, customFrom, customTo]);
 
   const { totalSecs, billableSecs, billableAmount, avgDailySecs, slices, bars } = useMemo(() => {
     let totalSecs = 0, billableSecs = 0, billableAmount = 0;
@@ -395,32 +369,25 @@ export default function ReportsPage() {
       .sort((a, b) => b.secs - a.secs);
 
     // Daily bars
-    const { from, to } = getPeriodRange(period);
+    let barFrom: Date, barTo: Date;
+    if (period === "custom") {
+      barFrom = customFrom ? new Date(customFrom + "T00:00:00") : new Date();
+      barTo   = customTo   ? new Date(customTo   + "T23:59:59") : new Date();
+    } else {
+      ({ from: barFrom, to: barTo } = getPeriodRange(period));
+    }
     const dayMap: Record<string, number> = {};
     for (const e of entries) {
       const k = new Date(e.started_at).toDateString();
       dayMap[k] = (dayMap[k] ?? 0) + (e.duration ?? 0);
     }
     const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    const MONS = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
+    const MONS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
     const bars: { label: string; secs: number }[] = [];
-    const cur = new Date(from);
+    const cur = new Date(barFrom);
     cur.setHours(0, 0, 0, 0);
-    const isWeek = period === "week" || period === "lastweek";
-    while (cur <= to) {
+    const isWeek = period === "7d";
+    while (cur <= barTo) {
       bars.push({
         label: isWeek
           ? DAYS[cur.getDay()]
@@ -432,7 +399,7 @@ export default function ReportsPage() {
 
     const avgDailySecs = daySet.size > 0 ? totalSecs / daySet.size : 0;
     return { totalSecs, billableSecs, billableAmount, avgDailySecs, slices, bars };
-  }, [entries, period, profileRate]);
+  }, [entries, period, profileRate, customFrom, customTo]);
 
   const billPct = totalSecs > 0 ? Math.round((billableSecs / totalSecs) * 100) : 0;
   const topSlice = slices[0];
@@ -505,6 +472,25 @@ export default function ReportsPage() {
           )}
         </div>
       </div>
+
+      {/* ── Custom date range ── */}
+      {period === "custom" && (
+        <div className={styles.customRange}>
+          <input
+            type="date"
+            value={customFrom}
+            onChange={e => setCustomFrom(e.target.value)}
+            className={styles.dateInput}
+          />
+          <span className={styles.dateRangeSep}>to</span>
+          <input
+            type="date"
+            value={customTo}
+            onChange={e => setCustomTo(e.target.value)}
+            className={styles.dateInput}
+          />
+        </div>
+      )}
 
       {loading ? (
         <div className={styles.loading}>Loading…</div>

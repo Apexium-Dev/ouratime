@@ -118,6 +118,38 @@
   box-shadow: 0 1px 6px rgba(5, 5, 5, 0.1);
 }
 
+/* ── Custom date range ── */
+.customRange {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.dateInput {
+  height: 36px;
+  padding: 0 0.75rem;
+  border: 1px solid #e8e5e2;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #333;
+  background: #fff;
+  cursor: pointer;
+}
+
+.dateInput:focus {
+  outline: none;
+  border-color: #008080;
+  box-shadow: 0 0 0 3px rgba(0,128,128,0.1);
+}
+
+.dateRangeSep {
+  font-size: 0.875rem;
+  color: #aaa;
+  font-weight: 500;
+}
+
 /* ── Stats row ── */
 .statsRow {
   display: grid;
