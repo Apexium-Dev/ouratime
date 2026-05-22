@@ -12,6 +12,10 @@
   overflow-y: auto;
 }
 
+@media print {
+  .sidebar { display: none !important; }
+}
+
 /* ── Nav items ── */
 .nav {
   display: flex;
