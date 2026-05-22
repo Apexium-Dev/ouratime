@@ -102,9 +102,11 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
           selectedTags.map(t => ({ time_entry_id: entry.id, tag_id: t.id }))
         );
       }
+      // Properly map the projects field, handling potential array return
+      const projectsValue = updated.projects ? (Array.isArray(updated.projects) ? updated.projects[0] : updated.projects) : null;
       onSave({
         ...updated,
-        projects:         updated.projects as { name: string; color: string } | null,
+        projects:         projectsValue as { name: string; color: string } | null,
         time_entry_tags:  selectedTags.map(t => ({ tags: t })),
       });
     }

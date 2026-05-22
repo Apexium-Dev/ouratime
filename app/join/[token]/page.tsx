@@ -34,7 +34,14 @@ export default function JoinPage() {
         .is("accepted_at", null)
         .single();
 
-      setInvite(data as InviteInfo ?? null);
+      // Map the data, handling potential array return from workspaces query
+      const mappedInvite: InviteInfo | null = data ? {
+        email: data.email,
+        role: data.role,
+        workspaces: data.workspaces ? (Array.isArray(data.workspaces) ? data.workspaces[0] : data.workspaces) : null,
+      } : null;
+
+      setInvite(mappedInvite);
       setLoading(false);
     }
     init();
