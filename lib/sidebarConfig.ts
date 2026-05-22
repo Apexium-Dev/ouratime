@@ -2,6 +2,7 @@ export const NAV_ITEMS = [
   { href: "/dashboard",           label: "Dashboard",  exact: true  },
   { href: "/dashboard/calendar",  label: "Calendar",   exact: false },
   { href: "/dashboard/reports",   label: "Reports",    exact: false },
+  { href: "/dashboard/invoices",  label: "Invoices",   exact: false },
   { href: "/dashboard/projects",  label: "Projects",   exact: false },
   { href: "/dashboard/tags",      label: "Tags",       exact: false },
   { href: "/dashboard/team",      label: "Team",       exact: false },

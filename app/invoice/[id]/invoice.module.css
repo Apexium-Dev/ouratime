@@ -1,0 +1,202 @@
+.page {
+  min-height: 100vh;
+  background: #F6F5F4;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 720px;
+  box-shadow: 0 4px 32px rgba(5, 5, 5, 0.08);
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  gap: 1.5rem;
+}
+
+.headerLeft {}
+
+.invLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #ccc;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.invNum {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #050505;
+  margin-bottom: 0.625rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.status_draft   { background: #F6F5F4; color: #888; }
+.status_sent    { background: rgba(59,130,246,0.1); color: #3b82f6; }
+.status_paid    { background: rgba(0,128,128,0.1); color: #008080; }
+.status_overdue { background: rgba(220,38,38,0.1); color: #dc2626; }
+
+.headerRight { text-align: right; }
+
+.metaRow {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  font-size: 0.875rem;
+  margin-bottom: 0.3rem;
+}
+
+.metaRow span:first-child { color: #aaa; }
+.metaRow span:last-child  { font-weight: 600; color: #333; }
+
+/* ── Parties ── */
+.parties {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.party {}
+
+.partyLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ccc;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.partyName { font-size: 1rem; font-weight: 700; color: #050505; margin-bottom: 0.2rem; }
+.partySub  { font-size: 0.875rem; color: #888; line-height: 1.4; }
+
+/* ── Table ── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.table thead tr {
+  border-bottom: 2px solid #ece9e6;
+}
+
+.table th {
+  padding: 0.5rem 0.5rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: left;
+}
+
+.table th:first-child { padding-left: 0; }
+.table th:last-child  { padding-right: 0; }
+
+.table td {
+  padding: 0.875rem 0.5rem;
+  border-bottom: 1px solid #f5f3f1;
+  font-size: 0.9375rem;
+  color: #333;
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.table td:first-child { padding-left: 0; }
+.table td:last-child  { padding-right: 0; }
+.table tr:last-child td { border-bottom: none; }
+
+.right { text-align: right !important; }
+.empty { color: #bbb; font-style: italic; }
+
+/* ── Totals ── */
+.totals {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 2px solid #ece9e6;
+  padding-top: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9375rem;
+  color: #666;
+}
+
+.grandTotal {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #050505;
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid #f0eeec;
+}
+
+/* ── Notes ── */
+.notes {
+  background: #fdfcfb;
+  border: 1px solid #f0eeec;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.notesLabel {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #ccc;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.notesText {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ccc;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f5f3f1;
+}
+
+@media (max-width: 600px) {
+  .card { padding: 1.75rem 1.25rem; }
+  .header { flex-direction: column; gap: 1rem; }
+  .headerRight { text-align: left; }
+  .metaRow { justify-content: flex-start; }
+}

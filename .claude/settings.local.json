@@ -3,10 +3,17 @@
     "allow": [
       "Bash(node -e \"const fs = require\\('fs'\\); const buf = fs.readFileSync\\('public/logo.png'\\); const w = buf.readUInt32BE\\(16\\); const h = buf.readUInt32BE\\(20\\); console.log\\(w, h\\);\")",
       "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\(JSON.stringify\\({...p.dependencies,...p.devDependencies}, null, 2\\)\\)\")",
-      "Bash(mkdir -p \"g:/github/ouratime/app/join/[token]\")"
+      "Bash(mkdir -p \"g:/github/ouratime/app/join/[token]\")",
+      "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/invoices/[id]\" \"g:/github/ouratime/app/invoice/[id]\")",
+      "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/invoices/[id]\")",
+      "Bash(mkdir -p \"g:/github/ouratime/app/invoice/[id]\")",
+      "Bash(npx tsc *)"
     ],
     "additionalDirectories": [
-      "g:\\github\\ouratime\\app\\join"
+      "g:\\github\\ouratime\\app\\join",
+      "g:\\github\\ouratime\\app\\dashboard\\invoices",
+      "g:\\github\\ouratime\\app\\dashboard\\invoices\\[id]",
+      "g:\\github\\ouratime\\app\\invoice\\[id]"
     ]
   }
 }
