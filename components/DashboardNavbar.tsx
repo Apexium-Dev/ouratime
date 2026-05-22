@@ -19,8 +19,9 @@ function formatTime(secs: number) {
 
 export function DashboardNavbar() {
   // User
-  const [userName, setUserName]   = useState("");
+  const [userName,    setUserName]    = useState("");
   const [userInitial, setUserInitial] = useState("");
+  const [userAvatar,  setUserAvatar]  = useState<string | null>(null);
 
   // Workspaces
   const [workspaces, setWorkspaces]               = useState<Workspace[]>([]);
@@ -67,10 +68,11 @@ export function DashboardNavbar() {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;
       const { data } = await supabase
-        .from("profiles").select("full_name").eq("id", user.id).single();
+        .from("profiles").select("full_name, avatar_url").eq("id", user.id).single();
       const name = data?.full_name || user.email?.split("@")[0] || "User";
       setUserName(name);
       setUserInitial(name[0].toUpperCase());
+      if (data?.avatar_url) setUserAvatar(data.avatar_url);
     });
   }, []);
 
@@ -255,7 +257,11 @@ export function DashboardNavbar() {
 
           {/* ── User ── */}
           <div className={styles.user}>
-            <div className={styles.avatar}>{userInitial}</div>
+            <div className={styles.avatar}>
+              {userAvatar
+                ? <img src={userAvatar} alt="" style={{ width:"100%", height:"100%", objectFit:"cover", borderRadius:"50%" }} />
+                : userInitial}
+            </div>
             <div className={styles.userInfo}>
               <span className={styles.userGreeting}>Hey,</span>
               <span className={styles.userName}>{userName}</span>

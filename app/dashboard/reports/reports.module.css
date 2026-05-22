@@ -1,0 +1,340 @@
+.page {
+  padding: 2rem 2rem 4rem;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+/* ── Period tabs ── */
+.tabs {
+  display: flex;
+  gap: 0.2rem;
+  margin-bottom: 2rem;
+  background: #F6F5F4;
+  border-radius: 12px;
+  padding: 0.3rem;
+  width: fit-content;
+}
+
+.tab {
+  padding: 0.4rem 1.1rem;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.tab:hover { color: #444; }
+
+.tabActive {
+  background: #fff;
+  color: #050505;
+  box-shadow: 0 1px 6px rgba(5, 5, 5, 0.1);
+}
+
+/* ── Stats row ── */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.statCard {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.statLbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #008080;
+  margin: 0;
+}
+
+.statVal {
+  font-size: 2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.teal { color: #008080; }
+
+.statValMd { font-size: 1.15rem; }
+
+.statSub {
+  font-size: 0.75rem;
+  color: #bbb;
+  font-weight: 500;
+  margin: 0;
+}
+
+.topDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* ── Charts row ── */
+.chartsRow {
+  display: grid;
+  grid-template-columns: 440px 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: start;
+}
+
+.chartCard {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.barCard { /* takes remaining space naturally */ }
+
+.chartTitle {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #008080;
+  margin: 0 0 1.25rem;
+}
+
+/* ── Donut ── */
+.donutLayout {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.donutSvg {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.donutBig {
+  font-size: 20px;
+  font-weight: 800;
+  fill: #050505;
+  font-variant-numeric: tabular-nums;
+}
+
+.donutSm {
+  font-size: 10px;
+  font-weight: 600;
+  fill: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.donutPct {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #008080;
+}
+
+/* ── Legend ── */
+.legend {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  cursor: default;
+  transition: background 0.1s, opacity 0.15s;
+}
+
+.legendRow:hover { background: #fafaf9; }
+
+.legendFade { opacity: 0.25; }
+
+.legendDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendName {
+  flex: 1;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.legendTime {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  flex-shrink: 0;
+}
+
+.legendPct {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #bbb;
+  min-width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── Bar chart ── */
+.barSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.axisLbl {
+  font-size: 10px;
+  fill: #c0bcb8;
+  font-weight: 500;
+}
+
+.tooltip {
+  font-size: 11px;
+  fill: #fff;
+  font-weight: 700;
+}
+
+/* ── Project breakdown ── */
+.breakdownCard {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.breakList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.breakRow {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  animation: fadeSlideIn 0.3s ease both;
+}
+
+.breakInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.breakDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.breakName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.breakTrack {
+  flex: 1;
+  height: 8px;
+  background: #F6F5F4;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.breakFill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px;
+}
+
+.breakTime {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  width: 58px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.breakPct {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #bbb;
+  width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── States ── */
+.loading {
+  padding: 5rem;
+  text-align: center;
+  color: #bbb;
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 6rem 2rem;
+  color: #ccc;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.emptyState p { margin: 0; }

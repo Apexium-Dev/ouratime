@@ -1,7 +1,6 @@
 export const NAV_ITEMS = [
   { href: "/dashboard",           label: "Dashboard",  exact: true  },
   { href: "/dashboard/calendar",  label: "Calendar",   exact: false },
-  { href: "/dashboard/timesheet", label: "Timesheet",  exact: false },
   { href: "/dashboard/reports",   label: "Reports",    exact: false },
   { href: "/dashboard/projects",  label: "Projects",   exact: false },
   { href: "/dashboard/tags",      label: "Tags",       exact: false },
