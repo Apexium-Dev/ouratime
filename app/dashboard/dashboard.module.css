@@ -217,6 +217,32 @@
   color: #008080;
 }
 
+.editBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: #ccc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: background 0.12s, color 0.12s, border-color 0.12s, opacity 0.12s;
+  flex-shrink: 0;
+}
+
+.entryRow:hover .editBtn {
+  opacity: 1;
+}
+
+.editBtn:hover {
+  background: #F6F5F4;
+  border-color: #e2e0de;
+  color: #444;
+}
+
 .playBtn {
   width: 30px;
   height: 30px;

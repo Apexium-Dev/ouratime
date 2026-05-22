@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
+import { EditEntryModal, type EntryForEdit } from "@/components/EditEntryModal";
 
 interface Tag     { id: string; name: string; color: string; }
 interface EntryRow {
@@ -51,10 +52,11 @@ function dayLabel(dateStr: string) {
 }
 
 export default function DashboardPage() {
-  const [entries, setEntries] = useState<EntryRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const [, setTick]           = useState(0);
+  const [entries,      setEntries]      = useState<EntryRow[]>([]);
+  const [loading,      setLoading]      = useState(true);
+  const [mounted,      setMounted]      = useState(false);
+  const [, setTick]                     = useState(0);
+  const [editingEntry, setEditingEntry] = useState<EntryRow | null>(null);
 
   // setMounted on first client render, then tick every second for live durations
   useEffect(() => {
@@ -129,6 +131,7 @@ export default function DashboardPage() {
   }
 
   return (
+    <>
     <main className={styles.page}>
 
       {/* ── Stats ── */}
@@ -223,11 +226,21 @@ export default function DashboardPage() {
                           </div>
                         </div>
 
-                        {/* Duration + play */}
+                        {/* Duration + actions */}
                         <div className={styles.entryRight}>
                           <span className={`${styles.duration} ${entry.billable ? styles.durationBillable : ""} ${running ? styles.durationRunning : ""}`}>
                             {fmtHHMMSS(dur)}
                           </span>
+                          <button
+                            className={styles.editBtn}
+                            onClick={() => setEditingEntry(entry)}
+                            title="Edit entry"
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                          </button>
                           {!running && (
                             <button
                               className={styles.playBtn}
@@ -252,5 +265,21 @@ export default function DashboardPage() {
       )}
 
     </main>
+
+    {editingEntry && (
+      <EditEntryModal
+        entry={editingEntry as EntryForEdit}
+        onClose={() => setEditingEntry(null)}
+        onSave={(updated) => {
+          setEntries(prev => prev.map(e => e.id === updated.id ? (updated as EntryRow) : e));
+          setEditingEntry(null);
+        }}
+        onDelete={(id) => {
+          setEntries(prev => prev.filter(e => e.id !== id));
+          setEditingEntry(null);
+        }}
+      />
+    )}
+    </>
   );
 }

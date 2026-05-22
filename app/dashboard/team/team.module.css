@@ -1,27 +1,33 @@
 .page {
   padding: 2rem 2rem 4rem;
-  max-width: 800px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
-/* ── Header ── */
-.header {
+/* ── Top bar ── */
+.topBar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.75rem;
+  margin-bottom: 1.5rem;
 }
 
-.headerLeft h1 {
-  font-size: 1.5rem;
+.topLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.pageTitle {
+  font-size: 1.375rem;
   font-weight: 800;
   color: #050505;
-  margin: 0 0 0.2rem;
+  margin: 0;
 }
 
-.headerLeft p {
-  font-size: 0.875rem;
+.pageSubtitle {
+  font-size: 0.8125rem;
   color: #aaa;
   margin: 0;
 }
@@ -46,20 +52,679 @@
 
 .inviteBtn:hover { background: #006666; }
 
-/* ── Create workspace ── */
+.deleteWsBtn {
+  height: 38px;
+  width: 38px;
+  border-radius: 10px;
+  border: 1px solid #fcc;
+  background: transparent;
+  color: #e55;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+
+.deleteWsBtn:hover:not(:disabled) {
+  background: #fff0f0;
+  border-color: #e55;
+}
+
+.deleteWsBtnConfirm {
+  width: auto;
+  padding: 0 0.875rem;
+  background: #e55;
+  border-color: #e55;
+  color: #fff;
+}
+
+.deleteWsBtnConfirm:hover:not(:disabled) {
+  background: #c44;
+  border-color: #c44;
+}
+
+.cancelDeleteWsBtn {
+  height: 38px;
+  padding: 0 0.875rem;
+  border-radius: 10px;
+  border: 1px solid #e5e2de;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #888;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.12s;
+}
+
+.cancelDeleteWsBtn:hover {
+  border-color: #ccc;
+  color: #444;
+}
+
+/* ── Workspace switcher ── */
+.wsSwitcher { position: relative; }
+
+.wsTrigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 34px;
+  padding: 0 0.75rem 0 0.625rem;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.12s, background 0.12s;
+  margin-bottom: 0.2rem;
+}
+
+.wsTrigger:hover { background: #eeecea; border-color: #ccc; }
+
+.wsTriggerDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.wsTriggerName {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #050505;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wsDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #e2e0de;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  padding: 0.5rem;
+  z-index: 50;
+}
+
+.wsDropdownLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #bbb;
+  padding: 0.25rem 0.5rem 0.375rem;
+  margin: 0;
+}
+
+.wsOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #333;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.wsOption:hover { background: #F6F5F4; }
+.wsOptionActive { font-weight: 700; color: #050505; }
+
+.wsOptionDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.wsDropdownDivider { height: 1px; background: #f0eeec; margin: 0.375rem 0; }
+
+.wsNewTrigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #888;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.wsNewTrigger:hover { background: #F6F5F4; color: #333; }
+
+.wsNewForm {
+  display: flex;
+  gap: 0.375rem;
+  padding: 0.25rem 0.25rem 0.375rem;
+}
+
+.wsNewInput {
+  flex: 1;
+  height: 32px;
+  padding: 0 0.625rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #050505;
+  background: #F6F5F4;
+  border: 1.5px solid transparent;
+  border-radius: 7px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.wsNewInput:focus { background: #fff; border-color: #008080; }
+.wsNewInput::placeholder { color: #bbb; }
+
+.wsNewBtn {
+  height: 32px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #008080;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.wsNewBtn:hover:not(:disabled) { background: #006666; }
+.wsNewBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.wsNewError { font-size: 0.8rem; color: #dc2626; margin: 0 0.5rem 0.25rem; }
+
+/* ── Invite card ── */
+.inviteCard {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 12px;
+  padding: 1.25rem 1.375rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inviteCardTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #050505;
+  margin: 0;
+}
+
+.inviteRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.inviteInput {
+  flex: 1;
+  min-width: 200px;
+  height: 38px;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #050505;
+  background: #F6F5F4;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+
+.inviteInput::placeholder { color: #bbb; }
+.inviteInput:focus { background: #fff; border-color: #008080; box-shadow: 0 0 0 3px rgba(0,128,128,0.1); }
+
+.roleSelect {
+  height: 38px;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #333;
+  background: #F6F5F4;
+  border: 1.5px solid #e2e0de;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.roleSelect:focus { border-color: #008080; }
+
+.inviteSendBtn {
+  height: 38px;
+  padding: 0 1.125rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #008080;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.inviteSendBtn:hover:not(:disabled) { background: #006666; }
+.inviteSendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.inviteCancelBtn {
+  height: 38px;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #555;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.inviteCancelBtn:hover { background: #eeecea; }
+
+.inviteLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0,128,128,0.06);
+  border: 1px solid rgba(0,128,128,0.18);
+  border-radius: 8px;
+  padding: 0.625rem 0.875rem;
+}
+
+.inviteLinkUrl {
+  flex: 1;
+  font-size: 0.8125rem;
+  color: #444;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.copyBtn {
+  height: 28px;
+  padding: 0 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #008080;
+  background: rgba(0,128,128,0.1);
+  border: 1px solid rgba(0,128,128,0.2);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.12s;
+}
+
+.copyBtn:hover { background: rgba(0,128,128,0.18); }
+.inviteError { font-size: 0.8125rem; color: #dc2626; margin: 0; }
+
+/* ── Search bar ── */
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #bbb;
+  pointer-events: none;
+  display: flex;
+}
+
+.searchInput {
+  width: 100%;
+  height: 36px;
+  padding: 0 0.875rem 0 2.25rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #050505;
+  background: #fff;
+  border: 1px solid #e2e0de;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.searchInput::placeholder { color: #bbb; }
+.searchInput:focus { border-color: #008080; box-shadow: 0 0 0 3px rgba(0,128,128,0.08); }
+
+.memberCount {
+  font-size: 0.8125rem;
+  color: #aaa;
+  margin-left: auto;
+}
+
+/* ── Table ── */
+.table {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.tableHead {
+  display: grid;
+  grid-template-columns: 1fr 1fr 160px 80px 100px 72px;
+  gap: 0;
+  padding: 0 1rem;
+  border-bottom: 1px solid #f0eeec;
+  background: #fafaf9;
+}
+
+.tableHeadCell {
+  padding: 0.6rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #bbb;
+  white-space: nowrap;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 160px 80px 100px 72px;
+  gap: 0;
+  padding: 0 1rem;
+  border-bottom: 1px solid #f5f3f1;
+  align-items: center;
+  transition: background 0.1s;
+  min-height: 56px;
+}
+
+.tableRow:last-child { border-bottom: none; }
+.tableRow:hover { background: #fdfcfb; }
+
+/* Name cell */
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.625rem 0.5rem;
+  min-width: 0;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.onlineDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  border: 2px solid #fff;
+}
+
+.nameText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #050505;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.youBadge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #aaa;
+  margin-left: 0.25rem;
+}
+
+/* Email cell */
+.emailCell {
+  padding: 0 0.5rem;
+  font-size: 0.8125rem;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status cell */
+.statusCell {
+  padding: 0 0.5rem;
+  min-width: 0;
+}
+
+.statusTracking {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #008080;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trackingDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #008080;
+  flex-shrink: 0;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.statusIdle {
+  font-size: 0.8rem;
+  color: #bbb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Today cell */
+.todayCell {
+  padding: 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #bbb;
+  text-align: right;
+}
+
+.todayCellActive { color: #008080; }
+
+/* Role cell */
+.roleCell {
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.roleBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.roleOwner  { background: rgba(0,128,128,0.1);   color: #008080; }
+.roleAdmin  { background: rgba(139,92,246,0.1);  color: #7c3aed; }
+.roleMember { background: #F6F5F4; color: #888; }
+
+/* Actions cell */
+.actionsCell {
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.tableRow:hover .actionsCell { opacity: 1; }
+
+.actionBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 7px;
+  color: #ccc;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.actionBtn:hover          { background: #F6F5F4; color: #555; }
+.actionBtnRemove:hover    { background: #fef2f2; color: #dc2626; }
+
+.roleDropdown {
+  height: 26px;
+  padding: 0 0.4rem;
+  font-size: 0.78rem;
+  font-family: inherit;
+  color: #333;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* ── Pending invites ── */
+.sectionLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #bbb;
+  margin: 0 0 0.5rem;
+}
+
+.pendingTable {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pendingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #f5f3f1;
+}
+
+.pendingRow:last-child { border-bottom: none; }
+
+.pendingEmail {
+  flex: 1;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.pendingDate {
+  font-size: 0.8rem;
+  color: #bbb;
+  white-space: nowrap;
+}
+
+.revokeBtn {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  color: #ccc;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.revokeBtn:hover { background: #fef2f2; color: #dc2626; }
+
+/* ── Empty / create workspace ── */
 .createCard {
   background: #fff;
   border: 1px solid #ece9e6;
   border-radius: 14px;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   text-align: center;
+  color: #ddd;
 }
-
-.createCard svg { color: #ddd; }
 
 .createTitle {
   font-size: 1.125rem;
@@ -81,7 +746,7 @@
   gap: 0.5rem;
   margin-top: 0.25rem;
   width: 100%;
-  max-width: 380px;
+  max-width: 360px;
 }
 
 .createInput {
@@ -95,16 +760,11 @@
   border: 1.5px solid transparent;
   border-radius: 9px;
   outline: none;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .createInput::placeholder { color: #bbb; }
-
-.createInput:focus {
-  background: #fff;
-  border-color: #008080;
-  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
-}
+.createInput:focus { background: #fff; border-color: #008080; box-shadow: 0 0 0 3px rgba(0,128,128,0.1); }
 
 .createSubmit {
   height: 42px;
@@ -117,367 +777,12 @@
   border: none;
   border-radius: 9px;
   cursor: pointer;
-  white-space: nowrap;
   transition: background 0.15s;
 }
 
 .createSubmit:hover:not(:disabled) { background: #006666; }
 .createSubmit:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* ── Invite form card ── */
-.inviteCard {
-  background: #fff;
-  border: 1px solid #ece9e6;
-  border-radius: 14px;
-  padding: 1.375rem 1.5rem;
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-}
-
-.inviteCardTitle {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #050505;
-  margin: 0;
-}
-
-.inviteRow {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.inviteInput {
-  flex: 1;
-  height: 40px;
-  padding: 0 0.875rem;
-  font-size: 0.9rem;
-  font-family: inherit;
-  color: #050505;
-  background: #F6F5F4;
-  border: 1.5px solid transparent;
-  border-radius: 9px;
-  outline: none;
-  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
-}
-
-.inviteInput::placeholder { color: #bbb; }
-.inviteInput:focus {
-  background: #fff;
-  border-color: #008080;
-  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
-}
-
-.roleSelect {
-  height: 40px;
-  padding: 0 0.75rem;
-  font-size: 0.875rem;
-  font-family: inherit;
-  color: #333;
-  background: #F6F5F4;
-  border: 1.5px solid #e2e0de;
-  border-radius: 9px;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-
-.roleSelect:focus { border-color: #008080; }
-
-.inviteSendBtn {
-  height: 40px;
-  padding: 0 1.125rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  font-family: inherit;
-  color: #fff;
-  background: #008080;
-  border: none;
-  border-radius: 9px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s;
-}
-
-.inviteSendBtn:hover:not(:disabled) { background: #006666; }
-.inviteSendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.inviteCancelBtn {
-  height: 40px;
-  padding: 0 1rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: #555;
-  background: #F6F5F4;
-  border: 1px solid #e2e0de;
-  border-radius: 9px;
-  cursor: pointer;
-  transition: background 0.12s;
-}
-
-.inviteCancelBtn:hover { background: #eeecea; }
-
-/* ── Invite link result ── */
-.inviteLink {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(0, 128, 128, 0.06);
-  border: 1px solid rgba(0, 128, 128, 0.18);
-  border-radius: 9px;
-  padding: 0.625rem 0.875rem;
-}
-
-.inviteLinkUrl {
-  flex: 1;
-  font-size: 0.8125rem;
-  color: #444;
-  font-family: monospace;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.copyBtn {
-  height: 30px;
-  padding: 0 0.75rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: #008080;
-  background: rgba(0, 128, 128, 0.1);
-  border: 1px solid rgba(0, 128, 128, 0.2);
-  border-radius: 7px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.12s;
-}
-
-.copyBtn:hover { background: rgba(0, 128, 128, 0.18); }
-
-.inviteError {
-  font-size: 0.8125rem;
-  color: #dc2626;
-  margin: 0;
-}
-
-/* ── Section label ── */
-.sectionLabel {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #bbb;
-  margin: 0 0 0.625rem;
-}
-
-/* ── Member list ── */
-.memberList {
-  background: #fff;
-  border: 1px solid #ece9e6;
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 1.25rem;
-}
-
-.memberRow {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1.25rem;
-  border-bottom: 1px solid #f5f3f1;
-  transition: background 0.1s;
-}
-
-.memberRow:last-child { border-bottom: none; }
-.memberRow:hover { background: #fdfcfb; }
-
-/* Avatar */
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.onlineDot {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #22c55e;
-  border: 2px solid #fff;
-}
-
-/* Member info */
-.memberInfo {
-  flex: 1;
-  min-width: 0;
-}
-
-.memberName {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #050505;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.memberEmail {
-  font-size: 0.75rem;
-  color: #aaa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Status text (tracking / last seen) */
-.memberStatus {
-  font-size: 0.75rem;
-  color: #008080;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180px;
-}
-
-.memberStatusIdle {
-  color: #bbb;
-}
-
-/* Today hours */
-.memberHours {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: #bbb;
-  white-space: nowrap;
-}
-
-.memberHoursActive { color: #008080; }
-
-/* Role badge */
-.roleBadge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 0.2rem 0.5rem;
-  border-radius: 9999px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.roleOwner  { background: rgba(0,128,128,0.1); color: #008080; }
-.roleAdmin  { background: rgba(139,92,246,0.1); color: #7c3aed; }
-.roleMember { background: #F6F5F4; color: #888; }
-
-/* Member actions */
-.memberActions {
-  display: flex;
-  gap: 2px;
-  opacity: 0;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-}
-
-.memberRow:hover .memberActions { opacity: 1; }
-
-.actionBtn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  border-radius: 7px;
-  color: #ccc;
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s;
-}
-
-.actionBtn:hover         { background: #F6F5F4; color: #555; }
-.actionBtnRemove:hover   { background: #fef2f2; color: #dc2626; }
-.actionBtnDisabled       { opacity: 0.3; pointer-events: none; }
-
-/* Role picker (inline) */
-.roleDropdown {
-  height: 28px;
-  padding: 0 0.5rem;
-  font-size: 0.8rem;
-  font-family: inherit;
-  color: #333;
-  background: #F6F5F4;
-  border: 1px solid #e2e0de;
-  border-radius: 7px;
-  outline: none;
-  cursor: pointer;
-}
-
-/* ── Pending invites ── */
-.inviteList {
-  background: #fff;
-  border: 1px solid #ece9e6;
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 1.25rem;
-}
-
-.inviteRow {
-  display: flex;
-  align-items: center;
-  gap: 0.875rem;
-  padding: 0.75rem 1.25rem;
-  border-bottom: 1px solid #f5f3f1;
-}
-
-.inviteRow:last-child { border-bottom: none; }
-
-.inviteEmail {
-  flex: 1;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #333;
-}
-
-.invitePending {
-  font-size: 0.75rem;
-  color: #bbb;
-  white-space: nowrap;
-}
-
-.revokeBtn {
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: none;
-  border-radius: 7px;
-  color: #ccc;
-  cursor: pointer;
-  transition: background 0.1s, color 0.1s;
-}
-
-.revokeBtn:hover { background: #fef2f2; color: #dc2626; }
-
-/* ── Empty / loading ── */
 .empty {
   text-align: center;
   padding: 4rem;

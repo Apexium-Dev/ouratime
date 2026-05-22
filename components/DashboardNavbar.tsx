@@ -6,8 +6,9 @@ import { CreateProjectModal } from "./CreateProjectModal";
 import { TagPicker, type Tag } from "./TagPicker";
 import styles from "./DashboardNavbar.module.css";
 
-interface Project { id: string; name: string; color: string; }
-interface Task    { id: string; name: string; project_id: string; }
+interface Project   { id: string; name: string; color: string; }
+interface Task      { id: string; name: string; project_id: string; }
+interface Workspace { id: string; name: string; }
 
 function formatTime(secs: number) {
   const h = Math.floor(secs / 3600);
@@ -20,6 +21,10 @@ export function DashboardNavbar() {
   // User
   const [userName, setUserName]   = useState("");
   const [userInitial, setUserInitial] = useState("");
+
+  // Workspaces
+  const [workspaces, setWorkspaces]               = useState<Workspace[]>([]);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace | null>(null);
 
   // Projects
   const [projects, setProjects]         = useState<Project[]>([]);
@@ -66,6 +71,20 @@ export function DashboardNavbar() {
       const name = data?.full_name || user.email?.split("@")[0] || "User";
       setUserName(name);
       setUserInitial(name[0].toUpperCase());
+    });
+  }, []);
+
+  // ── Load workspaces ───────────────────────────────────────
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("workspace_members")
+        .select("workspaces(id, name)")
+        .eq("user_id", user.id);
+      setWorkspaces(
+        (data ?? []).map(m => m.workspaces as unknown as Workspace).filter(Boolean)
+      );
     });
   }, []);
 
@@ -173,12 +192,13 @@ export function DashboardNavbar() {
     const { data: entry } = await supabase
       .from("time_entries")
       .insert({
-        user_id:     user.id,
-        project_id:  selectedProject?.id ?? null,
-        task_id:     taskId,
-        description: description.trim(),
-        started_at:  new Date().toISOString(),
+        user_id:      user.id,
+        project_id:   selectedProject?.id ?? null,
+        task_id:      taskId,
+        description:  description.trim(),
+        started_at:   new Date().toISOString(),
         billable,
+        workspace_id: selectedWorkspace?.id ?? null,
       })
       .select().single();
 
@@ -211,6 +231,7 @@ export function DashboardNavbar() {
     setDescription("");
     setSelectedTask(null);
     setSelectedTags([]);
+    setSelectedWorkspace(null);
     setBillable(true);
     setElapsed(0);
   };
@@ -337,6 +358,34 @@ export function DashboardNavbar() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Workspace / team picker — only if user belongs to at least one workspace */}
+                  {workspaces.length > 0 && (
+                    <>
+                      <div className={styles.panelDivider} />
+                      <div className={styles.panelBlock}>
+                        <p className={styles.panelLabel}>Team</p>
+                        <div className={styles.projectChips}>
+                          <button
+                            className={`${styles.projectChip} ${!selectedWorkspace ? styles.projectChipNone : ""}`}
+                            onMouseDown={() => setSelectedWorkspace(null)}
+                          >
+                            <span className={styles.projectChipDotEmpty} />
+                            Personal
+                          </button>
+                          {workspaces.map((ws) => (
+                            <button
+                              key={ws.id}
+                              className={`${styles.projectChip} ${selectedWorkspace?.id === ws.id ? styles.projectChipActive : ""}`}
+                              onMouseDown={() => setSelectedWorkspace(ws)}
+                            >
+                              {ws.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                 </div>
               )}
