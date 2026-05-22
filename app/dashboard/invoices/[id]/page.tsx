@@ -29,6 +29,10 @@ interface Invoice {
   notes: string;
   currency: string;
   tax_rate: number;
+  purchase_order: string;
+  payment_terms: string;
+  pay_to: string;
+  logo_url: string;
   invoice_items: InvoiceItem[];
 }
 
@@ -87,6 +91,11 @@ export default function InvoiceEditorPage() {
 
   /* Copied link toast */
   const [copied, setCopied] = useState(false);
+
+  /* Print preview */
+  function handlePrint() {
+    window.print();
+  }
 
   /* ── Load invoice ── */
   useEffect(() => {
@@ -252,6 +261,22 @@ export default function InvoiceEditorPage() {
     setTimeout(() => setCopied(false), 2000);
   }
 
+  /* ── Logo upload ── */
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !inv) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/invoice-logo-${id}.${ext}`;
+    const { error } = await supabase.storage.from("invoice-logos").upload(path, file, { upsert: true });
+    if (error) return;
+    const { data: { publicUrl } } = supabase.storage.from("invoice-logos").getPublicUrl(path);
+    const url = `${publicUrl}?t=${Date.now()}`;
+    field("logo_url", url);
+    await supabase.from("invoices").update({ logo_url: url }).eq("id", id);
+  }
+
   if (loading || !inv) {
     return <div style={{ padding: "4rem", textAlign: "center", color: "#aaa" }}>Loading…</div>;
   }
@@ -277,6 +302,14 @@ export default function InvoiceEditorPage() {
           </div>
         </div>
         <div className={styles.topActions}>
+          <button className={styles.printBtn} onClick={handlePrint}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9" />
+              <path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" />
+              <rect x="6" y="14" width="12" height="8" />
+            </svg>
+            Download PDF
+          </button>
           {(inv.status === "sent" || inv.status === "paid" || inv.status === "overdue") && (
             <button className={styles.linkBtn} onClick={copyLink}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
@@ -314,70 +347,94 @@ export default function InvoiceEditorPage() {
         {/* ── LEFT: Edit form ── */}
         <div className={styles.formCol}>
 
-          {/* From / sender */}
+          {/* Invoice info */}
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>From (you)</h2>
+            <h2 className={styles.cardTitle}>Invoice</h2>
             <div className={styles.fieldGrid}>
-              <div className={styles.field}>
-                <label className={styles.label}>Your name</label>
-                <input className={styles.input} value={inv.from_name} placeholder="Your name or business"
-                  onChange={e => field("from_name", e.target.value)} />
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Invoice ID</label>
+                <input className={styles.inlineInput} value={inv.number}
+                  placeholder="Add invoice ID"
+                  onChange={e => field("number", e.target.value)} />
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Your email</label>
-                <input className={styles.input} type="email" value={inv.from_email} placeholder="you@example.com"
-                  onChange={e => field("from_email", e.target.value)} />
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Invoice Date</label>
+                <input className={styles.inlineInput} type="date" value={inv.issue_date}
+                  onChange={e => field("issue_date", e.target.value)} />
+              </div>
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Due date</label>
+                <input className={styles.inlineInput} type="date" value={inv.due_date ?? ""}
+                  onChange={e => field("due_date", e.target.value)} />
+              </div>
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Purchase order</label>
+                <input className={styles.inlineInput} value={inv.purchase_order}
+                  placeholder="Add purchase order number"
+                  onChange={e => field("purchase_order", e.target.value)} />
+              </div>
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Payment terms</label>
+                <input className={styles.inlineInput} value={inv.payment_terms}
+                  placeholder="e.g. Net 30"
+                  onChange={e => field("payment_terms", e.target.value)} />
               </div>
             </div>
           </section>
 
-          {/* Client info */}
+          {/* Billed to */}
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Client</h2>
+            <h2 className={styles.cardTitle}>Billed to</h2>
             <div className={styles.fieldGrid}>
-              <div className={styles.field}>
-                <label className={styles.label}>Client name</label>
-                <input className={styles.input} value={inv.client_name} placeholder="Acme Inc."
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Name</label>
+                <input className={styles.inlineInput} value={inv.client_name} placeholder="Client name"
                   onChange={e => field("client_name", e.target.value)} />
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Email</label>
-                <input className={styles.input} type="email" value={inv.client_email} placeholder="client@example.com"
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Email</label>
+                <input className={styles.inlineInput} type="email" value={inv.client_email} placeholder="client@example.com"
                   onChange={e => field("client_email", e.target.value)} />
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Address</label>
-                <textarea className={styles.textarea} value={inv.client_address} rows={3}
-                  placeholder="123 Main St, City, Country"
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Address</label>
+                <textarea className={`${styles.inlineInput} ${styles.inlineTextarea}`} value={inv.client_address} rows={2}
+                  placeholder="Street, City, Country"
                   onChange={e => field("client_address", e.target.value)} />
               </div>
             </div>
           </section>
 
-          {/* Invoice details */}
+          {/* Pay to */}
           <section className={styles.card}>
-            <h2 className={styles.cardTitle}>Details</h2>
-            <div className={styles.detailsGrid}>
-              <div className={styles.field}>
-                <label className={styles.label}>Issue date</label>
-                <input className={styles.input} type="date" value={inv.issue_date}
-                  onChange={e => field("issue_date", e.target.value)} />
+            <h2 className={styles.cardTitle}>Pay to</h2>
+            <div className={styles.fieldGrid}>
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Your name</label>
+                <input className={styles.inlineInput} value={inv.from_name} placeholder="Your name or business"
+                  onChange={e => field("from_name", e.target.value)} />
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Due date</label>
-                <input className={styles.input} type="date" value={inv.due_date ?? ""}
-                  onChange={e => field("due_date", e.target.value)} />
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Your email</label>
+                <input className={styles.inlineInput} type="email" value={inv.from_email} placeholder="you@example.com"
+                  onChange={e => field("from_email", e.target.value)} />
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Currency</label>
-                <select className={styles.select} value={inv.currency}
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Payment details</label>
+                <textarea className={`${styles.inlineInput} ${styles.inlineTextarea}`} value={inv.pay_to} rows={2}
+                  placeholder="Bank account, PayPal, etc."
+                  onChange={e => field("pay_to", e.target.value)} />
+              </div>
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Currency</label>
+                <select className={styles.inlineSelect} value={inv.currency}
                   onChange={e => field("currency", e.target.value)}>
                   {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-              <div className={styles.field}>
-                <label className={styles.label}>Tax rate (%)</label>
-                <input className={styles.input} type="number" min="0" max="100" step="0.01"
+              <div className={styles.inlineField}>
+                <label className={styles.inlineLabel}>Tax rate (%)</label>
+                <input className={styles.inlineInput} type="number" min="0" max="100" step="0.01"
                   value={inv.tax_rate}
                   onChange={e => field("tax_rate", parseFloat(e.target.value) || 0)} />
               </div>
@@ -435,59 +492,77 @@ export default function InvoiceEditorPage() {
         {/* ── RIGHT: Preview ── */}
         <div className={styles.previewCol}>
           <div className={styles.previewCard}>
-            <div className={styles.previewHeader}>
-              <div>
-                <div className={styles.previewInvLabel}>INVOICE</div>
-                <div className={styles.previewInvNum}>{inv.number}</div>
-              </div>
-              <div className={styles.previewMeta}>
-                <div className={styles.previewMetaRow}>
-                  <span>Issued</span><span>{fmtDate(inv.issue_date)}</span>
-                </div>
-                {inv.due_date && (
-                  <div className={styles.previewMetaRow}>
-                    <span>Due</span><span>{fmtDate(inv.due_date)}</span>
+
+            {/* Logo upload */}
+            <label className={styles.logoUpload}>
+              {inv.logo_url
+                ? <img src={inv.logo_url} alt="Logo" className={styles.logoImg} />
+                : <span className={styles.logoPlaceholder}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    Add logo
+                  </span>
+              }
+              <input type="file" accept="image/*" className={styles.logoInput} onChange={handleLogoUpload} />
+            </label>
+
+            {/* Top strip */}
+            <div className={styles.pvTopStrip}>
+              <span className={styles.pvFromCompany}>{inv.from_name || ""}</span>
+              <span className={styles.pvInvNumber}>{inv.number}</span>
+            </div>
+
+            {/* Big heading */}
+            <div className={styles.pvHeading}>INVOICE</div>
+
+            {/* Date / status */}
+            <div className={styles.pvMeta}>
+              <span className={styles.pvMetaLine}>
+                <strong>Date: </strong>{fmtDate(inv.issue_date)}
+              </span>
+              {inv.due_date && (
+                <span className={styles.pvMetaLine}>
+                  <strong>Due: </strong>{fmtDate(inv.due_date)}
+                </span>
+              )}
+            </div>
+
+            {/* Parties */}
+            {(inv.client_name || inv.from_name) && (
+              <div className={styles.pvParties}>
+                {inv.client_name && (
+                  <div className={styles.pvParty}>
+                    <div className={styles.pvPartyLabel}>Billed to</div>
+                    <div className={styles.pvPartyName}>{inv.client_name}</div>
+                    {inv.client_email   && <div className={styles.pvPartySub}>{inv.client_email}</div>}
+                    {inv.client_address && <div className={styles.pvPartySub} style={{ whiteSpace: "pre-line" }}>{inv.client_address}</div>}
                   </div>
                 )}
-                <div className={`${styles.previewMetaRow} ${styles["pstatus_" + inv.status]}`}>
-                  <span>Status</span><span>{inv.status.charAt(0).toUpperCase() + inv.status.slice(1)}</span>
-                </div>
+                {inv.from_name && (
+                  <div className={styles.pvParty}>
+                    <div className={styles.pvPartyLabel}>From</div>
+                    <div className={styles.pvPartyName}>{inv.from_name}</div>
+                    {inv.from_email && <div className={styles.pvPartySub}>{inv.from_email}</div>}
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
-            <div className={styles.previewParties}>
-              {inv.from_name && (
-                <div className={styles.previewBillTo}>
-                  <div className={styles.previewBillLabel}>From</div>
-                  <div className={styles.previewBillName}>{inv.from_name}</div>
-                  {inv.from_email && <div className={styles.previewBillSub}>{inv.from_email}</div>}
-                </div>
-              )}
-              {inv.client_name && (
-                <div className={styles.previewBillTo}>
-                  <div className={styles.previewBillLabel}>Bill to</div>
-                  <div className={styles.previewBillName}>{inv.client_name}</div>
-                  {inv.client_email && <div className={styles.previewBillSub}>{inv.client_email}</div>}
-                  {inv.client_address && <div className={styles.previewBillSub} style={{ whiteSpace: "pre-line" }}>{inv.client_address}</div>}
-                </div>
-              )}
-            </div>
-
-            <table className={styles.previewTable}>
+            {/* Table */}
+            <table className={styles.pvTable}>
               <thead>
                 <tr>
                   <th>Description</th>
                   <th className={styles.right}>Qty</th>
-                  <th className={styles.right}>Rate</th>
+                  <th className={styles.right}>Unit price</th>
                   <th className={styles.right}>Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {inv.invoice_items.length === 0 ? (
-                  <tr><td colSpan={4} className={styles.previewEmpty}>No items</td></tr>
+                  <tr><td colSpan={4} className={styles.pvEmpty}>No items yet</td></tr>
                 ) : inv.invoice_items.map(item => (
                   <tr key={item.id}>
-                    <td>{item.description || <span className={styles.placeholder}>–</span>}</td>
+                    <td>{item.description || <span className={styles.placeholder}>—</span>}</td>
                     <td className={styles.right}>{item.quantity}</td>
                     <td className={styles.right}>{fmt(item.rate, inv.currency)}</td>
                     <td className={styles.right}>{fmt(lineTotal(item), inv.currency)}</td>
@@ -496,26 +571,33 @@ export default function InvoiceEditorPage() {
               </tbody>
             </table>
 
-            <div className={styles.previewTotals}>
-              <div className={styles.previewTotalRow}>
-                <span>Subtotal</span><span>{fmt(sub, inv.currency)}</span>
-              </div>
+            {/* Totals */}
+            <div className={styles.pvTotals}>
+              <div className={styles.pvTotalRow}><span>Subtotal</span><span>{fmt(sub, inv.currency)}</span></div>
               {inv.tax_rate > 0 && (
-                <div className={styles.previewTotalRow}>
-                  <span>Tax ({inv.tax_rate}%)</span><span>{fmt(tax, inv.currency)}</span>
-                </div>
+                <div className={styles.pvTotalRow}><span>Tax ({inv.tax_rate}%)</span><span>{fmt(tax, inv.currency)}</span></div>
               )}
-              <div className={`${styles.previewTotalRow} ${styles.grandTotal}`}>
+              <div className={`${styles.pvTotalRow} ${styles.pvGrandTotal}`}>
                 <span>Total</span><span>{fmt(total, inv.currency)}</span>
               </div>
             </div>
 
+            {/* Notes */}
             {inv.notes && (
-              <div className={styles.previewNotes}>
-                <div className={styles.previewNotesLabel}>Notes</div>
-                <div className={styles.previewNotesText}>{inv.notes}</div>
+              <div className={styles.pvNotes}>
+                <div className={styles.pvNotesLabel}>Notes</div>
+                <div className={styles.pvNotesText}>{inv.notes}</div>
               </div>
             )}
+
+            {/* Pay to */}
+            {(inv.pay_to || inv.payment_terms) && (
+              <div className={styles.pvNotes}>
+                {inv.payment_terms && <div className={styles.pvNotesLabel}>Payment terms: <span style={{fontWeight:500,color:"#555"}}>{inv.payment_terms}</span></div>}
+                {inv.pay_to && <div className={styles.pvNotesText}>{inv.pay_to}</div>}
+              </div>
+            )}
+
           </div>
         </div>
 
