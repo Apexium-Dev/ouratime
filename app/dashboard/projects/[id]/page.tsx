@@ -12,6 +12,7 @@ interface Project {
   id: string; name: string; color: string;
   description: string; tags: string[];
   hourly_rate: number; user_id: string;
+  invite_token: string;
 }
 interface Member {
   id: string; user_id: string;
@@ -68,6 +69,9 @@ export default function ProjectDetailPage() {
   const [inviteRole, setIRole]      = useState<"admin"|"member">("member");
   const [inviting, setInviting]     = useState(false);
   const [inviteMsg, setMsg]         = useState<{type:"error"|"ok"; text:string}|null>(null);
+  const [pendingInvites, setPending] = useState<{notification_id:string; recipient_id:string; recipient_name:string|null; role:string; created_at:string}[]>([]);
+  const [cancelling, setCancelling]  = useState<string|null>(null);
+  const [linkCopied, setLinkCopied]  = useState(false);
 
   const isAdmin = myRole === "owner" || myRole === "admin";
 
@@ -97,6 +101,14 @@ export default function ProjectDetailPage() {
     setLoading(false);
   }, [id, router]);
 
+  // ── Load pending invites ─────────────────────────────────────────────────────
+  const loadPendingInvites = useCallback(async () => {
+    if (!isAdmin) return;
+    const { data, error } = await supabase.rpc("get_pending_invites", { p_project_id: id });
+    if (error) console.error("get_pending_invites error:", error);
+    setPending(data ?? []);
+  }, [id, isAdmin]);
+
   // ── Load time entries ─────────────────────────────────────────────────────────
   const loadTime = useCallback(async () => {
     setTimeLd(true);
@@ -108,6 +120,7 @@ export default function ProjectDetailPage() {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (tab === "time") loadTime(); }, [tab, loadTime]);
+  useEffect(() => { if (tab === "members") loadPendingInvites(); }, [tab, loadPendingInvites]);
 
   // ── Edit project ─────────────────────────────────────────────────────────────
   const startEdit = () => {
@@ -143,36 +156,42 @@ export default function ProjectDetailPage() {
     if (!inviteEmail.trim()) return;
     setInviting(true); setMsg(null);
 
-    const { data: found } = await supabase
-      .rpc("find_user_by_email", { lookup_email: inviteEmail.trim() });
-
-    if (!found || found.length === 0) {
-      setMsg({ type: "error", text: "No user found with that email. They need to sign up first." });
-      setInviting(false); return;
-    }
-
-    const target = found[0];
-    if (members.some(m => m.user_id === target.id)) {
-      setMsg({ type: "error", text: "This person is already a member." });
-      setInviting(false); return;
-    }
-
-    const { error } = await supabase.rpc("add_project_member", {
-      p_project_id: id, p_user_id: target.id, p_role: inviteRole,
+    const { data, error } = await supabase.rpc("send_project_invite", {
+      p_project_id: id, p_email: inviteEmail.trim(), p_role: inviteRole,
     });
 
     if (error) {
       setMsg({ type: "error", text: error.message });
+    } else if (data === "already_member") {
+      setMsg({ type: "error", text: "This person is already a member." });
+    } else if (data === "already_pending") {
+      setMsg({ type: "error", text: "An invite is already pending for this person." });
     } else {
-      setMsg({ type: "ok", text: `${target.full_name ?? inviteEmail} added as ${inviteRole}.` });
+      setMsg({ type: "ok", text: `Invite sent to ${inviteEmail.trim()} as ${inviteRole}.` });
       setEmail("");
-      setMembers(prev => [...prev, {
-        id: crypto.randomUUID(), user_id: target.id, role: inviteRole,
-        created_at: new Date().toISOString(),
-        full_name: target.full_name, avatar_url: target.avatar_url,
-      }]);
+      await loadPendingInvites();
     }
     setInviting(false);
+  };
+
+  const cancelInvite = async (notificationId: string) => {
+    setCancelling(notificationId);
+    const { error } = await supabase.rpc("cancel_invite", { p_notification_id: notificationId });
+    if (error) {
+      setMsg({ type: "error", text: `Could not cancel invite: ${error.message}` });
+    } else {
+      setPending(prev => prev.filter(p => p.notification_id !== notificationId));
+    }
+    setCancelling(null);
+  };
+
+  const copyInviteLink = () => {
+    if (!project) return;
+    const url = `${window.location.origin}/invite/${(project as any).invite_token}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
   };
 
   // ── Change role ──────────────────────────────────────────────────────────────
@@ -346,7 +365,27 @@ export default function ProjectDetailPage() {
         <div className={styles.membersSection}>
           {isAdmin && (
             <div className={styles.inviteBox}>
-              <p className={styles.inviteTitle}>Invite member</p>
+              <div className={styles.inviteBoxHeader}>
+                <p className={styles.inviteTitle}>Invite member</p>
+                <button className={styles.copyLinkBtn} onClick={copyInviteLink}>
+                  {linkCopied ? (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M20 6L9 17l-5-5"/>
+                      </svg>
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                      </svg>
+                      Copy invite link
+                    </>
+                  )}
+                </button>
+              </div>
               <div className={styles.inviteRow}>
                 <input className={styles.inviteInput} type="email" placeholder="Email address"
                   value={inviteEmail}
@@ -359,7 +398,7 @@ export default function ProjectDetailPage() {
                 </select>
                 <button className={styles.inviteBtn} onClick={invite}
                   disabled={inviting || !inviteEmail.trim()}>
-                  {inviting ? "Adding…" : "Add"}
+                  {inviting ? "Sending…" : "Send invite"}
                 </button>
               </div>
               {inviteMsg && (
@@ -367,6 +406,40 @@ export default function ProjectDetailPage() {
                   {inviteMsg.text}
                 </p>
               )}
+            </div>
+          )}
+
+          {/* Pending invites */}
+          {isAdmin && pendingInvites.length > 0 && (
+            <div className={styles.pendingSection}>
+              <p className={styles.pendingSectionTitle}>
+                Pending invitations
+                <span className={styles.pendingCount}>{pendingInvites.length}</span>
+              </p>
+              <div className={styles.pendingList}>
+                {pendingInvites.map(p => (
+                  <div key={p.notification_id} className={styles.pendingRow}>
+                    <div className={styles.pendingAvatar}>
+                      {initials(p.recipient_name)}
+                    </div>
+                    <div className={styles.pendingInfo}>
+                      <span className={styles.pendingName}>{p.recipient_name ?? "Unknown user"}</span>
+                      <span className={styles.pendingMeta}>
+                        Invited as <span className={styles.rolePillSm}>{p.role}</span>
+                        {" · "}{new Date(p.created_at).toLocaleDateString("en-US", { month:"short", day:"numeric" })}
+                      </span>
+                    </div>
+                    <span className={styles.pendingStatusPill}>Pending</span>
+                    <button
+                      className={styles.cancelInviteBtn}
+                      onClick={() => cancelInvite(p.notification_id)}
+                      disabled={cancelling === p.notification_id}
+                    >
+                      {cancelling === p.notification_id ? "…" : "Cancel"}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

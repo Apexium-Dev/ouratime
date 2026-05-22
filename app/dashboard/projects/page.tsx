@@ -28,6 +28,7 @@ interface Project {
   is_template: boolean;
   is_favorite: boolean;
   hourly_rate: number;
+  user_id: string;
 }
 interface Stats {
   tasks: number;
@@ -64,6 +65,7 @@ export default function ProjectsPage() {
   const [editRate, setEditRate] = useState(0);
   const [saving, setSaving] = useState(false);
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deleteError, setDeleteError] = useState("");
@@ -72,6 +74,9 @@ export default function ProjectsPage() {
     window.dispatchEvent(new CustomEvent("ouratime:projects-changed"));
 
   const load = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) setCurrentUserId(user.id);
+
     const [{ data: proj }, { data: entries }, { data: tasks }, { data: memberRows }] =
       await Promise.all([
         supabase
@@ -83,7 +88,7 @@ export default function ProjectsPage() {
           .from("time_entries")
           .select("project_id, duration, started_at"),
         supabase.from("tasks").select("project_id"),
-        supabase.from("project_members").select("project_id").eq("status", "active"),
+        supabase.from("project_members").select("id, project_id, user_id").eq("status", "active"),
       ]);
     setProjects(proj ?? []);
     const monday = startOfWeek();
@@ -164,17 +169,37 @@ export default function ProjectsPage() {
     }
   };
 
-  // ── Delete ──────────────────────────────────────────────────
-  const deleteProject = async (id: string) => {
+  // ── Delete (owner) or Leave (member) ────────────────────────
+  const deleteProject = async (project: Project) => {
     setDeleteLoading(true);
     setDeleteError("");
-    const { error } = await supabase.from("projects").delete().eq("id", id);
-    setDeleteLoading(false);
-    if (error) {
-      setDeleteError(error.message);
-      return;
+
+    const isOwner = project.user_id === currentUserId;
+
+    if (isOwner) {
+      const { error } = await supabase.from("projects").delete().eq("id", project.id);
+      setDeleteLoading(false);
+      if (error) { setDeleteError(error.message); return; }
+    } else {
+      // Leave: remove own member row via RPC
+      const { data: myRow } = await supabase
+        .from("project_members")
+        .select("id")
+        .eq("project_id", project.id)
+        .eq("user_id", currentUserId!)
+        .eq("status", "active")
+        .single();
+      if (!myRow) {
+        setDeleteLoading(false);
+        setDeleteError("Member row not found.");
+        return;
+      }
+      const { error } = await supabase.rpc("remove_project_member", { p_member_id: myRow.id });
+      setDeleteLoading(false);
+      if (error) { setDeleteError(error.message); return; }
     }
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+
+    setProjects((prev) => prev.filter((p) => p.id !== project.id));
     setDeletingId(null);
     notify();
   };
@@ -368,13 +393,25 @@ export default function ProjectsPage() {
                   </div>
                 ) : isDeleting ? (
                   <div className={styles.deleteBody}>
-                    <p className={styles.deleteMsg}>
-                      Delete <strong>{project.name}</strong>?
-                    </p>
-                    <p className={styles.deleteHint}>
-                      Tasks will be deleted. Time entries will lose the project
-                      reference.
-                    </p>
+                    {project.user_id === currentUserId ? (
+                      <>
+                        <p className={styles.deleteMsg}>
+                          Delete <strong>{project.name}</strong>?
+                        </p>
+                        <p className={styles.deleteHint}>
+                          Tasks will be deleted. Time entries will lose the project reference.
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <p className={styles.deleteMsg}>
+                          Leave <strong>{project.name}</strong>?
+                        </p>
+                        <p className={styles.deleteHint}>
+                          You will be removed as a member. You can rejoin via invite.
+                        </p>
+                      </>
+                    )}
                     {deleteError && (
                       <p className={styles.deleteError}>{deleteError}</p>
                     )}
@@ -390,10 +427,12 @@ export default function ProjectsPage() {
                       </button>
                       <button
                         className={styles.deleteConfirmBtn}
-                        onClick={() => deleteProject(project.id)}
+                        onClick={() => deleteProject(project)}
                         disabled={deleteLoading}
                       >
-                        {deleteLoading ? "Deleting…" : "Delete"}
+                        {deleteLoading
+                          ? (project.user_id === currentUserId ? "Deleting…" : "Leaving…")
+                          : (project.user_id === currentUserId ? "Delete" : "Leave")}
                       </button>
                     </div>
                   </div>
@@ -618,6 +657,7 @@ export default function ProjectsPage() {
               is_template: false,
               is_favorite: false,
               hourly_rate: 0,
+              user_id: currentUserId ?? "",
             };
             setProjects((prev) => [...prev, full]);
             setStats((prev) => ({
