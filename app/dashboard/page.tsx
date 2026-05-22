@@ -17,8 +17,9 @@ interface EntryRow {
   time_entry_tags: { tags: Tag | null }[];
 }
 
-function entryDuration(e: EntryRow): number {
+function entryDuration(e: EntryRow, mounted = true): number {
   if (e.stopped_at) return e.duration ?? 0;
+  if (!mounted) return 0;
   return Math.floor((Date.now() - new Date(e.started_at).getTime()) / 1000);
 }
 
@@ -52,10 +53,12 @@ function dayLabel(dateStr: string) {
 export default function DashboardPage() {
   const [entries, setEntries] = useState<EntryRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [tick, setTick]       = useState(0);
+  const [mounted, setMounted] = useState(false);
+  const [, setTick]           = useState(0);
 
-  // Tick every second to keep running-entry durations fresh
+  // setMounted on first client render, then tick every second for live durations
   useEffect(() => {
+    setMounted(true);
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
@@ -86,9 +89,9 @@ export default function DashboardPage() {
   const todayStr = new Date().toDateString();
   const weekEntries = entries.filter((e) => new Date(e.started_at) >= monday);
   const todayEntries = entries.filter((e) => new Date(e.started_at).toDateString() === todayStr);
-  const totalSecs    = weekEntries.reduce((s, e) => s + entryDuration(e), 0);
-  const billableSecs = weekEntries.filter((e) => e.billable && e.stopped_at).reduce((s, e) => s + entryDuration(e), 0);
-  const todaySecs    = todayEntries.reduce((s, e) => s + entryDuration(e), 0);
+  const totalSecs    = weekEntries.reduce((s, e) => s + entryDuration(e, mounted), 0);
+  const billableSecs = weekEntries.filter((e) => e.billable && e.stopped_at).reduce((s, e) => s + entryDuration(e, mounted), 0);
+  const todaySecs    = todayEntries.reduce((s, e) => s + entryDuration(e, mounted), 0);
   const activeProjects = new Set(weekEntries.map((e) => e.project_id).filter(Boolean)).size;
 
   // ── Group by day ────────────────────────────────────────────
@@ -120,9 +123,6 @@ export default function DashboardPage() {
       },
     }));
   };
-
-  // suppress unused tick warning — it only exists to trigger re-render
-  void tick;
 
   if (loading) {
     return <main className={styles.page}><p className={styles.empty}>Loading…</p></main>;
@@ -167,7 +167,7 @@ export default function DashboardPage() {
       ) : (
         <div className={styles.groups}>
           {groups.map((g) => {
-            const groupTotal = g.entries.reduce((s, e) => s + entryDuration(e), 0);
+            const groupTotal = g.entries.reduce((s, e) => s + entryDuration(e, mounted), 0);
             return (
               <div key={g.dateKey} className={styles.group}>
                 <div className={styles.groupHeader}>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                 <div className={styles.entryCard}>
                   {g.entries.map((entry, idx) => {
                     const tags = entry.time_entry_tags.map((t) => t.tags).filter((t): t is Tag => t !== null);
-                    const dur  = entryDuration(entry);
+                    const dur  = entryDuration(entry, mounted);
                     const running = !entry.stopped_at;
                     return (
                       <div

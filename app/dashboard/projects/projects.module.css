@@ -1,0 +1,359 @@
+.page {
+  padding: 2rem 2rem 4rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #050505;
+  margin: 0 0 0.2rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.newBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #008080;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+
+.newBtn:hover {
+  background: #006666;
+  box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Card ── */
+.card {
+  background: #fff;
+  border: 1px solid #ece9e6;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+}
+
+.cardAccent {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.cardBody {
+  flex: 1;
+  padding: 1.125rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+/* ── Card top row ── */
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.projectName {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.nameDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.nameText {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #050505;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Action buttons ── */
+.actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.card:hover .actions {
+  opacity: 1;
+}
+
+.actionBtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  border-radius: 7px;
+  color: #bbb;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.actionBtn:hover {
+  background: #F6F5F4;
+  color: #555;
+}
+
+.actionBtnDelete:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* ── Stats row ── */
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.statVal {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #050505;
+  line-height: 1;
+}
+
+.statLbl {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statDivider {
+  width: 1px;
+  height: 28px;
+  background: #f0eeec;
+  flex-shrink: 0;
+  margin: 0 0.875rem;
+}
+
+/* ── Edit mode ── */
+.editBody {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.editInput {
+  width: 100%;
+  height: 38px;
+  padding: 0 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #050505;
+  background: #F6F5F4;
+  border: 1.5px solid #e2e0de;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.editInput:focus {
+  border-color: #008080;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+}
+
+.swatches {
+  display: flex;
+  gap: 6px;
+}
+
+.swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.swatch:hover { transform: scale(1.2); }
+
+.swatchActive {
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.85);
+  transform: scale(1.1);
+}
+
+.editActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+/* ── Delete confirmation ── */
+.deleteBody {
+  flex: 1;
+  padding: 1.125rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.deleteMsg {
+  font-size: 0.9rem;
+  color: #050505;
+  margin: 0;
+}
+
+.deleteHint {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.deleteError {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin: 0;
+}
+
+.deleteActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* ── Shared button styles ── */
+.cancelBtn {
+  height: 34px;
+  padding: 0 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #555;
+  background: #F6F5F4;
+  border: 1px solid #e2e0de;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.cancelBtn:hover { background: #eeecea; }
+
+.saveBtn {
+  height: 34px;
+  padding: 0 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #008080;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.saveBtn:hover:not(:disabled) { background: #006666; }
+.saveBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.deleteConfirmBtn {
+  height: 34px;
+  padding: 0 1rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: #fff;
+  background: #dc2626;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.deleteConfirmBtn:hover:not(:disabled) { background: #b91c1c; }
+.deleteConfirmBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Empty state ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 5rem 2rem;
+  color: #bbb;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.emptyState p { margin: 0; }
+.emptyState .newBtn { margin-top: 1rem; }
+
+.empty {
+  text-align: center;
+  padding: 4rem;
+  color: #bbb;
+  font-size: 0.875rem;
+}

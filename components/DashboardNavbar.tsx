@@ -108,6 +108,12 @@ export function DashboardNavbar() {
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  // ── Reload projects when changed from another page ────────
+  useEffect(() => {
+    window.addEventListener("ouratime:projects-changed", loadProjects);
+    return () => window.removeEventListener("ouratime:projects-changed", loadProjects);
+  }, [loadProjects]);
+
   // ── Resume event from dashboard ───────────────────────────
   useEffect(() => {
     function handle(e: Event) {
