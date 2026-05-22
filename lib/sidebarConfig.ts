@@ -1,11 +1,11 @@
 export const NAV_ITEMS = [
-  { href: "/dashboard",           label: "Dashboard",  exact: true  },
-  { href: "/dashboard/calendar",  label: "Calendar",   exact: false },
-  { href: "/dashboard/reports",   label: "Reports",    exact: false },
-  { href: "/dashboard/invoices",  label: "Invoices",   exact: false },
-  { href: "/dashboard/projects",  label: "Projects",   exact: false },
-  { href: "/dashboard/tags",      label: "Tags",       exact: false },
-  { href: "/dashboard/team",      label: "Team",       exact: false },
+  { href: "/dashboard", label: "Dashboard", exact: true },
+  { href: "/dashboard/calendar", label: "Calendar", exact: false },
+  { href: "/dashboard/invoices", label: "Invoices", exact: false },
+  { href: "/dashboard/reports", label: "Reports", exact: false },
+  { href: "/dashboard/projects", label: "Projects", exact: false },
+  { href: "/dashboard/tags", label: "Tags", exact: false },
+  { href: "/dashboard/team", label: "Team", exact: false },
 ] as const;
 
 export type NavHref = (typeof NAV_ITEMS)[number]["href"];
@@ -22,10 +22,10 @@ export function loadSidebarConfig(): SidebarEntry[] {
     // Keep saved order, drop unknowns, append any new items at end
     const merged: SidebarEntry[] = [];
     for (const entry of parsed) {
-      if (NAV_ITEMS.some(n => n.href === entry.href)) merged.push(entry);
+      if (NAV_ITEMS.some((n) => n.href === entry.href)) merged.push(entry);
     }
     for (const item of NAV_ITEMS) {
-      if (!merged.some(e => e.href === item.href)) {
+      if (!merged.some((e) => e.href === item.href)) {
         merged.push({ href: item.href, visible: true });
       }
     }
@@ -41,5 +41,5 @@ export function saveSidebarConfig(config: SidebarEntry[]): void {
 }
 
 export function defaultConfig(): SidebarEntry[] {
-  return NAV_ITEMS.map(item => ({ href: item.href, visible: true }));
+  return NAV_ITEMS.map((item) => ({ href: item.href, visible: true }));
 }

@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { loadSidebarConfig, saveSidebarConfig, type SidebarEntry } from "@/lib/sidebarConfig";
+import {
+  defaultConfig,
+  loadSidebarConfig,
+  saveSidebarConfig,
+  type SidebarEntry,
+} from "@/lib/sidebarConfig";
 import styles from "./DashboardSidebar.module.css";
 
 const NAV = [
@@ -12,7 +17,16 @@ const NAV = [
     label: "Dashboard",
     exact: true,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="3" y="3" width="7" height="7" rx="1" />
         <rect x="14" y="3" width="7" height="7" rx="1" />
         <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -25,7 +39,16 @@ const NAV = [
     label: "Calendar",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <rect x="3" y="4" width="18" height="18" rx="2" />
         <line x1="16" y1="2" x2="16" y2="6" />
         <line x1="8" y1="2" x2="8" y2="6" />
@@ -38,7 +61,16 @@ const NAV = [
     label: "Invoices",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
         <polyline points="14 2 14 8 20 8" />
         <line x1="16" y1="13" x2="8" y2="13" />
@@ -52,7 +84,16 @@ const NAV = [
     label: "Reports",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <line x1="18" y1="20" x2="18" y2="10" />
         <line x1="12" y1="20" x2="12" y2="4" />
         <line x1="6" y1="20" x2="6" y2="14" />
@@ -65,7 +106,16 @@ const NAV = [
     label: "Projects",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" />
       </svg>
     ),
@@ -75,7 +125,16 @@ const NAV = [
     label: "Tags",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" />
         <circle cx="7" cy="7" r="1" fill="currentColor" stroke="none" />
       </svg>
@@ -86,7 +145,16 @@ const NAV = [
     label: "Team",
     exact: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
         <circle cx="9" cy="7" r="4" />
         <path d="M23 21v-2a4 4 0 00-3-3.87" />
@@ -98,9 +166,7 @@ const NAV = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const [config, setConfig] = useState<SidebarEntry[]>(
-    NAV.map(n => ({ href: n.href, visible: true }))
-  );
+  const [config, setConfig] = useState<SidebarEntry[]>(defaultConfig);
   const dragHref = useRef<string | null>(null);
   const [dropHref, setDropHref] = useState<string | null>(null);
 
@@ -108,20 +174,23 @@ export function DashboardSidebar() {
     setConfig(loadSidebarConfig());
     const handler = () => setConfig(loadSidebarConfig());
     window.addEventListener("ouratime:sidebar-changed", handler);
-    return () => window.removeEventListener("ouratime:sidebar-changed", handler);
+    return () =>
+      window.removeEventListener("ouratime:sidebar-changed", handler);
   }, []);
 
-  const isActive = (href: string, exact?: boolean) =>
-    exact ? pathname === href : pathname.startsWith(href);
+  const isActive = (href: string, exact?: boolean) => {
+    if (exact) return pathname === href;
+    return pathname === href || pathname.startsWith(href + "/");
+  };
 
   const handleDrop = (targetHref: string) => {
     const from = dragHref.current;
     if (!from || from === targetHref) return;
 
     const next = [...config];
-    const fromIdx = next.findIndex(e => e.href === from);
-    const toIdx   = next.findIndex(e => e.href === targetHref);
-    const [item]  = next.splice(fromIdx, 1);
+    const fromIdx = next.findIndex((e) => e.href === from);
+    const toIdx = next.findIndex((e) => e.href === targetHref);
+    const [item] = next.splice(fromIdx, 1);
     next.splice(fromIdx < toIdx ? toIdx - 1 : toIdx, 0, item);
 
     dragHref.current = null;
@@ -131,8 +200,8 @@ export function DashboardSidebar() {
   };
 
   const visibleNav = config
-    .filter(e => e.visible)
-    .map(e => NAV.find(n => n.href === e.href))
+    .filter((e) => e.visible)
+    .map((e) => NAV.find((n) => n.href === e.href))
     .filter(Boolean) as typeof NAV;
 
   return (
@@ -143,7 +212,9 @@ export function DashboardSidebar() {
             key={item.href}
             className={[
               styles.navItem,
-              dropHref === item.href && dragHref.current !== item.href ? styles.navItemDropTarget : "",
+              dropHref === item.href && dragHref.current !== item.href
+                ? styles.navItemDropTarget
+                : "",
             ].join(" ")}
             draggable
             onDragStart={(e) => {
@@ -156,8 +227,14 @@ export function DashboardSidebar() {
               if (dropHref !== item.href) setDropHref(item.href);
             }}
             onDragLeave={() => setDropHref(null)}
-            onDrop={(e) => { e.preventDefault(); handleDrop(item.href); }}
-            onDragEnd={() => { dragHref.current = null; setDropHref(null); }}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleDrop(item.href);
+            }}
+            onDragEnd={() => {
+              dragHref.current = null;
+              setDropHref(null);
+            }}
           >
             <Link
               href={item.href}
@@ -165,11 +242,16 @@ export function DashboardSidebar() {
               draggable={false}
             >
               <span className={styles.dragHandle}>
-                <svg width="9" height="14" viewBox="0 0 9 14" fill="currentColor">
-                  <circle cx="2" cy="2"  r="1.4" />
-                  <circle cx="7" cy="2"  r="1.4" />
-                  <circle cx="2" cy="7"  r="1.4" />
-                  <circle cx="7" cy="7"  r="1.4" />
+                <svg
+                  width="9"
+                  height="14"
+                  viewBox="0 0 9 14"
+                  fill="currentColor"
+                >
+                  <circle cx="2" cy="2" r="1.4" />
+                  <circle cx="7" cy="2" r="1.4" />
+                  <circle cx="2" cy="7" r="1.4" />
+                  <circle cx="7" cy="7" r="1.4" />
                   <circle cx="2" cy="12" r="1.4" />
                   <circle cx="7" cy="12" r="1.4" />
                 </svg>
@@ -186,7 +268,16 @@ export function DashboardSidebar() {
           href="/dashboard/settings"
           className={`${styles.item} ${isActive("/dashboard/settings") ? styles.itemActive : ""}`}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <circle cx="12" cy="12" r="3" />
             <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
           </svg>
