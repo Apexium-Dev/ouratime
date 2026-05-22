@@ -38,6 +38,9 @@ next-env.d.ts
 .vscode/
 .idea/
 *.swp
+
+# AI tools
+.claude/
 *.swo
 *~
 
