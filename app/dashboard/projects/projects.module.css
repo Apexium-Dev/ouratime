@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .title {
@@ -48,6 +48,59 @@
   box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
 }
 
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 1.5rem;
+  background: #F6F5F4;
+  border: 1px solid #ece9e6;
+  border-radius: 10px;
+  padding: 3px;
+  width: fit-content;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 32px;
+  padding: 0 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  font-family: inherit;
+  color: #888;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.tab:hover { color: #333; background: #eeecea; }
+
+.tabActive {
+  background: #fff;
+  color: #050505;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.tabCount {
+  background: #ece9e6;
+  color: #888;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.05rem 0.4rem;
+  line-height: 1.4;
+}
+
+.tabActive .tabCount {
+  background: #e6f2f2;
+  color: #008080;
+}
+
 /* ── Grid ── */
 .grid {
   display: grid;
@@ -65,9 +118,10 @@
   transition: box-shadow 0.15s;
 }
 
-.card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-}
+.card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07); }
+
+.cardArchived { opacity: 0.6; }
+.cardArchived:hover { opacity: 1; }
 
 .cardAccent {
   width: 4px;
@@ -76,14 +130,14 @@
 
 .cardBody {
   flex: 1;
-  padding: 1.125rem 1.25rem 1rem;
+  padding: 1.125rem 1rem 1rem 1.125rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
 }
 
-/* ── Card top row ── */
+/* ── Card top ── */
 .cardTop {
   display: flex;
   justify-content: space-between;
@@ -94,8 +148,9 @@
 .projectName {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   min-width: 0;
+  flex: 1;
 }
 
 .nameDot {
@@ -114,48 +169,58 @@
   text-overflow: ellipsis;
 }
 
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: rgba(0, 128, 128, 0.1);
+  color: #008080;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
 /* ── Action buttons ── */
 .actions {
   display: flex;
-  gap: 2px;
+  gap: 1px;
   flex-shrink: 0;
   opacity: 0;
   transition: opacity 0.15s;
 }
 
-.card:hover .actions {
-  opacity: 1;
-}
+.card:hover .actions { opacity: 1; }
 
 .actionBtn {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   background: none;
-  border-radius: 7px;
-  color: #bbb;
+  border-radius: 6px;
+  color: #ccc;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.1s, color 0.1s;
+  flex-shrink: 0;
 }
 
-.actionBtn:hover {
-  background: #F6F5F4;
-  color: #555;
-}
+.actionBtn:hover       { background: #F6F5F4; color: #555; }
+.actionBtnFavOn        { color: #f59e0b !important; opacity: 1 !important; }
+.actionBtnFavOn:hover  { background: #fffbeb !important; color: #d97706 !important; }
+.actionBtnOn           { color: #008080 !important; opacity: 1 !important; }
+.actionBtnOn:hover     { background: #e6f2f2 !important; color: #006666 !important; }
+.actionBtnDelete:hover { background: #fef2f2 !important; color: #dc2626 !important; }
 
-.actionBtnDelete:hover {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-/* ── Stats row ── */
+/* ── Stats ── */
 .statsRow {
   display: flex;
   align-items: center;
-  gap: 0;
 }
 
 .stat {
@@ -174,7 +239,7 @@
 }
 
 .statLbl {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: #bbb;
   text-transform: uppercase;
@@ -189,10 +254,10 @@
   margin: 0 0.875rem;
 }
 
-/* ── Edit mode ── */
+/* ── Edit body ── */
 .editBody {
   flex: 1;
-  padding: 1rem 1.25rem;
+  padding: 1rem 1.125rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -210,8 +275,8 @@
   border: 1.5px solid #e2e0de;
   border-radius: 8px;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
   box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .editInput:focus {
@@ -237,26 +302,16 @@
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.swatch:hover { transform: scale(1.2); }
+.swatch:hover    { transform: scale(1.2); }
+.swatchActive    { box-shadow: inset 0 0 0 3px rgba(255,255,255,0.85); transform: scale(1.1); }
 
-.swatchActive {
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.85);
-  transform: scale(1.1);
-}
-
-.editActions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-/* ── Delete confirmation ── */
+/* ── Delete body ── */
 .deleteBody {
   flex: 1;
-  padding: 1.125rem 1.25rem 1rem;
+  padding: 1.125rem 1.125rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .deleteMsg {
@@ -268,8 +323,8 @@
 .deleteHint {
   font-size: 0.8rem;
   color: #aaa;
-  margin: 0;
   line-height: 1.4;
+  margin: 0;
 }
 
 .deleteError {
@@ -278,16 +333,17 @@
   margin: 0;
 }
 
-.deleteActions {
+/* ── Row actions (edit / delete confirm buttons) ── */
+.rowActions {
   display: flex;
   gap: 0.5rem;
+  justify-content: flex-end;
   margin-top: 0.25rem;
 }
 
-/* ── Shared button styles ── */
 .cancelBtn {
-  height: 34px;
-  padding: 0 1rem;
+  height: 32px;
+  padding: 0 0.875rem;
   font-size: 0.8125rem;
   font-weight: 600;
   font-family: inherit;
@@ -302,8 +358,8 @@
 .cancelBtn:hover { background: #eeecea; }
 
 .saveBtn {
-  height: 34px;
-  padding: 0 1rem;
+  height: 32px;
+  padding: 0 0.875rem;
   font-size: 0.8125rem;
   font-weight: 700;
   font-family: inherit;
@@ -319,8 +375,8 @@
 .saveBtn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .deleteConfirmBtn {
-  height: 34px;
-  padding: 0 1rem;
+  height: 32px;
+  padding: 0 0.875rem;
   font-size: 0.8125rem;
   font-weight: 700;
   font-family: inherit;

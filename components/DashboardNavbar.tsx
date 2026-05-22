@@ -72,7 +72,11 @@ export function DashboardNavbar() {
   // ── Load projects ──────────────────────────────────────────
   const loadProjects = useCallback(async () => {
     const { data } = await supabase
-      .from("projects").select("id, name, color").order("created_at");
+      .from("projects")
+      .select("id, name, color, is_favorite")
+      .eq("archived", false)
+      .order("is_favorite", { ascending: false })
+      .order("created_at");
     setProjects(data ?? []);
   }, []);
 

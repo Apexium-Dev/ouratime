@@ -9,6 +9,7 @@ Run these in order in **Supabase Dashboard → SQL Editor → New query**.
 | `migrations/003_projects_tasks_entries.sql` | Projects, Tasks, Time Entries tables | ✅ Run this |
 | `migrations/004_tags.sql` | Tags + time_entry_tags junction table | ✅ Run this |
 | `migrations/005_hourly_rate_billable.sql` | Hourly rate on profiles + billable flag on time_entries | ✅ Run this |
+| `migrations/006_project_status.sql` | archived, is_template, is_favorite columns on projects | ✅ Run this |
 
 ## How to run
 
