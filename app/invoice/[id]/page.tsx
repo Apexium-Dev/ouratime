@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
 import styles from "./invoice.module.css";
+import { PrintButton } from "./PrintButton";
 
 interface InvoiceItem {
   id: string;
@@ -24,6 +25,10 @@ interface Invoice {
   tax_rate: number;
   from_name: string;
   from_email: string;
+  purchase_order: string;
+  payment_terms: string;
+  pay_to: string;
+  logo_url: string;
   invoice_items: InvoiceItem[];
   profiles: { full_name: string | null; email: string | null } | null;
 }
@@ -41,6 +46,7 @@ function fmtDate(d: string | null) {
 const STATUS_STYLES: Record<string, string> = {
   draft: "status_draft", sent: "status_sent", paid: "status_paid", overdue: "status_overdue",
 };
+const STATUS_LABEL: Record<string, string> = { sent: "Sent", paid: "Paid", overdue: "Overdue" };
 
 export default async function PublicInvoicePage({ params }: { params: { id: string } }) {
   const supabase = createClient(
@@ -62,55 +68,82 @@ export default async function PublicInvoicePage({ params }: { params: { id: stri
   const tax   = sub * (inv.tax_rate / 100);
   const total = sub + tax;
 
-  const STATUS_LABEL: Record<string, string> = { sent: "Sent", paid: "Paid", overdue: "Overdue" };
+  const fromName = inv.from_name || inv.profiles?.full_name || null;
+  const fromEmail = inv.from_email || inv.profiles?.email || null;
 
   return (
     <div className={styles.page}>
+      <div className={styles.toolbar}>
+        <PrintButton />
+      </div>
+
       <div className={styles.card}>
 
-        {/* Header */}
-        <div className={styles.header}>
-          <div className={styles.headerLeft}>
-            <div className={styles.invLabel}>INVOICE</div>
-            <div className={styles.invNum}>{inv.number}</div>
+        {/* ── Logo + top strip ── */}
+        <div className={styles.topStrip}>
+          <div>
+            {inv.logo_url && <img src={inv.logo_url} alt="Logo" className={styles.logo} />}
+            <span className={styles.fromCompany}>{fromName ?? ""}</span>
+          </div>
+          <span className={styles.invNumberTop}>{inv.number}</span>
+        </div>
+
+        {/* ── Big heading ── */}
+        <h1 className={styles.heading}>INVOICE</h1>
+
+        {/* ── Date / due / status ── */}
+        <div className={styles.metaBlock}>
+          <div className={styles.metaLine}>
+            <strong>Date:</strong>{fmtDate(inv.issue_date)}
             <span className={`${styles.badge} ${styles[STATUS_STYLES[inv.status] ?? "status_sent"]}`}>
               {STATUS_LABEL[inv.status] ?? inv.status}
             </span>
           </div>
-          <div className={styles.headerRight}>
-            <div className={styles.metaRow}><span>Issued</span><span>{fmtDate(inv.issue_date)}</span></div>
-            {inv.due_date && <div className={styles.metaRow}><span>Due</span><span>{fmtDate(inv.due_date)}</span></div>}
+          {inv.due_date && (
+            <div className={styles.metaLine}>
+              <strong>Due:</strong>{fmtDate(inv.due_date)}
+            </div>
+          )}
+          {inv.purchase_order && (
+            <div className={styles.metaLine}>
+              <strong>PO:</strong>{inv.purchase_order}
+            </div>
+          )}
+          {inv.payment_terms && (
+            <div className={styles.metaLine}>
+              <strong>Payment terms:</strong>{inv.payment_terms}
+            </div>
+          )}
+        </div>
+
+        {/* ── Parties ── */}
+        {(inv.client_name || fromName) && (
+          <div className={styles.parties}>
+            {inv.client_name && (
+              <div className={styles.party}>
+                <div className={styles.partyLabel}>Billed to</div>
+                <div className={styles.partyName}>{inv.client_name}</div>
+                {inv.client_email   && <div className={styles.partySub}>{inv.client_email}</div>}
+                {inv.client_address && <div className={styles.partySub} style={{ whiteSpace: "pre-line" }}>{inv.client_address}</div>}
+              </div>
+            )}
+            {fromName && (
+              <div className={styles.party}>
+                <div className={styles.partyLabel}>From</div>
+                <div className={styles.partyName}>{fromName}</div>
+                {fromEmail && <div className={styles.partySub}>{fromEmail}</div>}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        {/* Parties */}
-        <div className={styles.parties}>
-          {(inv.from_name || inv.profiles?.full_name) && (
-            <div className={styles.party}>
-              <div className={styles.partyLabel}>From</div>
-              <div className={styles.partyName}>{inv.from_name || inv.profiles?.full_name || "—"}</div>
-              {(inv.from_email || inv.profiles?.email) && (
-                <div className={styles.partySub}>{inv.from_email || inv.profiles?.email}</div>
-              )}
-            </div>
-          )}
-          {inv.client_name && (
-            <div className={styles.party}>
-              <div className={styles.partyLabel}>Bill to</div>
-              <div className={styles.partyName}>{inv.client_name}</div>
-              {inv.client_email  && <div className={styles.partySub}>{inv.client_email}</div>}
-              {inv.client_address && <div className={styles.partySub} style={{ whiteSpace: "pre-line" }}>{inv.client_address}</div>}
-            </div>
-          )}
-        </div>
-
-        {/* Line items */}
+        {/* ── Line items ── */}
         <table className={styles.table}>
           <thead>
             <tr>
               <th>Description</th>
               <th className={styles.right}>Qty</th>
-              <th className={styles.right}>Rate</th>
+              <th className={styles.right}>Unit price</th>
               <th className={styles.right}>Amount</th>
             </tr>
           </thead>
@@ -128,30 +161,34 @@ export default async function PublicInvoicePage({ params }: { params: { id: stri
           </tbody>
         </table>
 
-        {/* Totals */}
+        {/* ── Totals ── */}
         <div className={styles.totals}>
           <div className={styles.totalRow}><span>Subtotal</span><span>{fmt(sub, inv.currency)}</span></div>
           {inv.tax_rate > 0 && (
             <div className={styles.totalRow}><span>Tax ({inv.tax_rate}%)</span><span>{fmt(tax, inv.currency)}</span></div>
           )}
           <div className={`${styles.totalRow} ${styles.grandTotal}`}>
-            <span>Total due</span><span>{fmt(total, inv.currency)}</span>
+            <span>Total</span><span>{fmt(total, inv.currency)}</span>
           </div>
         </div>
 
-        {/* Notes */}
+        {/* ── Notes ── */}
         {inv.notes && (
           <div className={styles.notes}>
-            <div className={styles.notesLabel}>Notes</div>
+            <div className={styles.notesLabel}>Additional notes</div>
             <div className={styles.notesText}>{inv.notes}</div>
           </div>
         )}
 
-        {/* Footer */}
-        <div className={styles.footer}>
-          Generated with OuraTime
-        </div>
+        {/* ── Pay to ── */}
+        {inv.pay_to && (
+          <div className={styles.notes}>
+            <div className={styles.notesLabel}>Payment details</div>
+            <div className={styles.notesText}>{inv.pay_to}</div>
+          </div>
+        )}
 
+        <div className={styles.footer}>Generated with OuraTime</div>
       </div>
     </div>
   );
