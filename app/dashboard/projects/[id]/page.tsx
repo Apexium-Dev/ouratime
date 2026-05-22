@@ -75,7 +75,16 @@ export default function ProjectDetailPage() {
 
   const isAdmin = myRole === "owner" || myRole === "admin";
 
-  // ── Load ─────────────────────────────────────────────────────────────────────
+  // ── Load members ─────────────────────────────────────────────────────────────
+  const loadMembers = useCallback(async (userId: string, projOwnerId: string) => {
+    const { data: mRows } = await supabase
+      .rpc("get_project_members", { p_project_id: id });
+    const me = (mRows ?? []).find((m: Member) => m.user_id === userId);
+    setMyRole(me?.role ?? (projOwnerId === userId ? "owner" : null));
+    setMembers(mRows ?? []);
+  }, [id]);
+
+  // ── Initial load ─────────────────────────────────────────────────────────────
   const load = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/login"); return; }
@@ -86,12 +95,10 @@ export default function ProjectDetailPage() {
     if (!proj) { router.push("/dashboard/projects"); return; }
     setProject(proj);
 
-    // Use RPC — bypasses recursive RLS
     const { data: mRows } = await supabase
       .rpc("get_project_members", { p_project_id: id });
 
     if (!mRows || mRows.length === 0) {
-      // Might be non-member; redirect
       if (proj.user_id !== user.id) { router.push("/dashboard/projects"); return; }
     }
 
@@ -106,6 +113,7 @@ export default function ProjectDetailPage() {
     if (!isAdmin) return;
     const { data, error } = await supabase.rpc("get_pending_invites", { p_project_id: id });
     if (error) console.error("get_pending_invites error:", error);
+    console.log("get_pending_invites data:", data);
     setPending(data ?? []);
   }, [id, isAdmin]);
 
@@ -120,7 +128,12 @@ export default function ProjectDetailPage() {
 
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (tab === "time") loadTime(); }, [tab, loadTime]);
-  useEffect(() => { if (tab === "members") loadPendingInvites(); }, [tab, loadPendingInvites]);
+  // Reload members + pending invites every time the Members tab is opened
+  useEffect(() => {
+    if (tab !== "members" || !currentUserId || !project) return;
+    loadMembers(currentUserId, project.user_id);
+    loadPendingInvites();
+  }, [tab, currentUserId, project, loadMembers, loadPendingInvites]);
 
   // ── Edit project ─────────────────────────────────────────────────────────────
   const startEdit = () => {
