@@ -67,6 +67,23 @@
   font-weight: 600;
 }
 
+/* Unread badge */
+.badge {
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 .itemActive:hover {
   background: rgba(0, 128, 128, 0.13);
   color: #006666;

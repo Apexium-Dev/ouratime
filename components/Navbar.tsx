@@ -61,7 +61,7 @@ export function Navbar() {
   };
 
   const hiddenPages = ["/login", "/signup", "/forgot-password", "/verify-email", "/auth/callback", "/onboarding/profile", "/onboarding/customize"];
-  if (hiddenPages.includes(pathname) || pathname.startsWith("/dashboard") || pathname.startsWith("/invoice")) return null;
+  if (hiddenPages.includes(pathname) || pathname.startsWith("/dashboard") || pathname.startsWith("/invoice") || pathname.startsWith("/invite")) return null;
 
   const links = user ? appLinks : marketingLinks;
 

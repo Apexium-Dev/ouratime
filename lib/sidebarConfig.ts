@@ -4,6 +4,7 @@ export const NAV_ITEMS = [
   { href: "/dashboard/invoices", label: "Invoices", exact: false },
   { href: "/dashboard/reports", label: "Reports", exact: false },
   { href: "/dashboard/projects", label: "Projects", exact: false },
+  { href: "/dashboard/inbox", label: "Inbox", exact: false },
   { href: "/dashboard/tags", label: "Tags", exact: false },
   { href: "/dashboard/team", label: "Team", exact: false },
 ] as const;

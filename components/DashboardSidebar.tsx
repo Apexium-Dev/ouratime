@@ -9,6 +9,7 @@ import {
   saveSidebarConfig,
   type SidebarEntry,
 } from "@/lib/sidebarConfig";
+import { supabase } from "@/lib/supabase";
 import styles from "./DashboardSidebar.module.css";
 
 const NAV = [
@@ -53,6 +54,17 @@ const NAV = [
         <line x1="16" y1="2" x2="16" y2="6" />
         <line x1="8" y1="2" x2="8" y2="6" />
         <line x1="3" y1="10" x2="21" y2="10" />
+      </svg>
+    ),
+  },
+  {
+    href: "/dashboard/inbox",
+    label: "Inbox",
+    exact: false,
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+        <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/>
       </svg>
     ),
   },
@@ -169,6 +181,7 @@ export function DashboardSidebar() {
   const [config, setConfig] = useState<SidebarEntry[]>(defaultConfig);
   const dragHref = useRef<string | null>(null);
   const [dropHref, setDropHref] = useState<string | null>(null);
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     setConfig(loadSidebarConfig());
@@ -176,6 +189,16 @@ export function DashboardSidebar() {
     window.addEventListener("ouratime:sidebar-changed", handler);
     return () =>
       window.removeEventListener("ouratime:sidebar-changed", handler);
+  }, []);
+
+  useEffect(() => {
+    supabase.rpc("get_unread_count").then(({ data }) => setUnread(Number(data ?? 0)));
+    const unsub = supabase.channel("notif-badge")
+      .on("postgres_changes", { event: "*", schema: "public", table: "notifications" }, () => {
+        supabase.rpc("get_unread_count").then(({ data }) => setUnread(Number(data ?? 0)));
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(unsub); };
   }, []);
 
   const isActive = (href: string, exact?: boolean) => {
@@ -242,12 +265,7 @@ export function DashboardSidebar() {
               draggable={false}
             >
               <span className={styles.dragHandle}>
-                <svg
-                  width="9"
-                  height="14"
-                  viewBox="0 0 9 14"
-                  fill="currentColor"
-                >
+                <svg width="9" height="14" viewBox="0 0 9 14" fill="currentColor">
                   <circle cx="2" cy="2" r="1.4" />
                   <circle cx="7" cy="2" r="1.4" />
                   <circle cx="2" cy="7" r="1.4" />
@@ -258,6 +276,9 @@ export function DashboardSidebar() {
               </span>
               {item.icon}
               {item.label}
+              {item.href === "/dashboard/inbox" && unread > 0 && (
+                <span className={styles.badge}>{unread > 9 ? "9+" : unread}</span>
+              )}
             </Link>
           </div>
         ))}
