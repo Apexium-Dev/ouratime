@@ -69,73 +69,56 @@ const ENTRIES = [
   { color: "#008080", desc: "Component library",   proj: "Website Redesign", dur: "3:07" },
 ];
 
+const HERO_STATS = [
+  { val: "100%", label: "Free forever" },
+  { val: "Open", label: "Source code" },
+  { val: "0",    label: "Paywalls" },
+];
+
 export default function Home() {
   return (
     <>
       {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.heroGrid} aria-hidden="true" />
-        <div className={styles.heroGlow} aria-hidden="true" />
+        <div className={styles.glowA}   aria-hidden="true" />
+        <div className={styles.glowB}   aria-hidden="true" />
 
         <div className={styles.heroInner}>
-          {/* Left */}
-          <div className={styles.heroText}>
-            <div className={styles.heroBadge}>
-              <span className={styles.heroBadgeDot} />
-              Free &amp; Open Source
-            </div>
-            <h1 className={styles.heroHeadline}>
-              Track time.<br />
-              <span className={styles.heroAccent}>Own your data.</span>
-            </h1>
-            <p className={styles.heroSub}>
-              The open-source Clockify alternative for teams who value clarity.
-              No paywalls. No bloat. Just the tools you actually use.
-            </p>
-            <div className={styles.heroCtas}>
-              <Link href="/signup" className={styles.ctaPrimary}>
-                Get started free
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <path d="M14 5l7 7m0 0l-7 7m7-7H3"/>
-                </svg>
-              </Link>
-              <Link href="/#preview" className={styles.ctaGhost}>See it in action</Link>
-            </div>
-            <p className={styles.heroNote}>No credit card · Free forever</p>
+          <div className={styles.heroBadge}>
+            <span className={styles.heroBadgeDot} />
+            Free &amp; Open Source
           </div>
 
-          {/* Right: floating stat cards */}
-          <div className={styles.heroCards} aria-hidden="true">
-            <div className={styles.floatCard}>
-              <p className={styles.floatLabel}>Today&apos;s total</p>
-              <p className={styles.floatVal}>04:23</p>
-              <div className={styles.floatTrack}>
-                <div className={styles.floatFill} style={{ width: "62%" }} />
-              </div>
-              <p className={styles.floatSub}>62% of daily goal</p>
-            </div>
+          <h1 className={styles.heroHeadline}>
+            Track time.<br />
+            <span className={styles.heroAccent}>Own your data.</span>
+          </h1>
 
-            <div className={`${styles.floatCard} ${styles.floatRunning}`}>
-              <div className={styles.floatRunRow}>
-                <span className={styles.floatDot} />
-                <span className={styles.floatRunLbl}>Running</span>
-                <span className={styles.floatRunTime}>01:47:22</span>
-              </div>
-              <p className={styles.floatRunDesc}>Homepage wireframes</p>
-              <div className={styles.floatRunProj}>
-                <span className={styles.floatProjDot} style={{ background: "#008080" }} />
-                Website Redesign
-              </div>
-            </div>
+          <p className={styles.heroSub}>
+            The open-source Clockify alternative for teams who value clarity.
+            No paywalls. No bloat. Just the tools you actually use.
+          </p>
 
-            <div className={`${styles.floatCard} ${styles.floatStatsRow}`}>
-              {[["12","Projects"],["38h","This week"],["5","Members"]].map(([v,l]) => (
-                <div key={l} className={styles.floatStat}>
-                  <span className={styles.floatStatVal}>{v}</span>
-                  <span className={styles.floatStatLbl}>{l}</span>
-                </div>
-              ))}
-            </div>
+          <div className={styles.heroCtas}>
+            <Link href="/signup" className={styles.ctaPrimary}>
+              Get started free
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </Link>
+            <Link href="/#preview" className={styles.ctaGhost}>See it in action</Link>
+          </div>
+
+          <p className={styles.heroNote}>No credit card · Free forever · Self-hostable</p>
+
+          <div className={styles.heroStats}>
+            {HERO_STATS.map(({ val, label }) => (
+              <div key={label} className={styles.heroStatItem}>
+                <span className={styles.heroStatVal}>{val}</span>
+                <span className={styles.heroStatLabel}>{label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -149,7 +132,6 @@ export default function Home() {
             A full-featured time tracker that feels lightweight. Built for individuals and teams.
           </p>
 
-          {/* Browser frame */}
           <div className={styles.browser}>
             <div className={styles.browserBar}>
               <div className={styles.browserDots}>
@@ -159,7 +141,6 @@ export default function Home() {
             </div>
 
             <div className={styles.browserBody}>
-              {/* Mock sidebar */}
               <div className={styles.mockSidebar}>
                 <div className={styles.mockLogoRow}>
                   <div className={styles.mockLogoIcon} />
@@ -173,7 +154,6 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* Mock main */}
               <div className={styles.mockMain}>
                 <div className={styles.mockTopBar}>
                   <span className={styles.mockPageTitle}>Dashboard</span>
@@ -183,7 +163,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Stats row */}
                 <div className={styles.mockStatsRow}>
                   {[["Today","04:23"],["This week","18:41"],["This month","72:08"]].map(([l,v]) => (
                     <div key={l} className={styles.mockStatCard}>
@@ -193,7 +172,6 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Chart + entries side by side */}
                 <div className={styles.mockGrid}>
                   <div className={styles.mockChartCard}>
                     <p className={styles.mockCardTitle}>Weekly hours</p>
@@ -267,7 +245,8 @@ export default function Home() {
 
       {/* ── CTA banner ── */}
       <section className={styles.ctaBanner}>
-        <div className={styles.ctaBannerGrid} aria-hidden="true" />
+        <div className={styles.ctaBannerGlow} aria-hidden="true" />
+        <div className={styles.ctaBannerGrid}  aria-hidden="true" />
         <div className={styles.ctaBannerInner}>
           <h2 className={styles.ctaBannerHeadline}>Ready to take back your time?</h2>
           <p className={styles.ctaBannerSub}>Free forever. No credit card required.</p>
@@ -282,7 +261,6 @@ export default function Home() {
 
       {/* ── Footer ── */}
       <footer className={styles.footer}>
-        <div className={styles.footerDots} aria-hidden="true" />
         <div className={styles.footerInner}>
           <div className={styles.footerBottom}>
             <div>
@@ -293,7 +271,7 @@ export default function Home() {
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>
               <Link href="/contact">Contact</Link>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href="https://github.com/Apexium-Dev/ouratime" target="_blank" rel="noopener noreferrer">GitHub</a>
             </div>
           </div>
         </div>
