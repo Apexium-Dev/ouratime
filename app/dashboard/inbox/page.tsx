@@ -33,6 +33,7 @@ export default function InboxPage() {
   const [items, setItems]     = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [acting, setActing]   = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.rpc("get_inbox").then(({ data, error }) => {
@@ -61,6 +62,18 @@ export default function InboxPage() {
     ));
     setActing(null);
     window.dispatchEvent(new CustomEvent("ouratime:projects-changed"));
+  }
+
+  async function deleteNotification(id: string) {
+    setDeleting(id);
+    const { error } = await supabase.from("notifications").delete().eq("id", id);
+    if (error) {
+      console.error("delete notification error:", error);
+      setDeleting(null);
+      return;
+    }
+    setItems(prev => prev.filter(n => n.id !== id));
+    setDeleting(null);
   }
 
   async function respondJoin(id: string, approve: boolean) {
@@ -139,9 +152,23 @@ export default function InboxPage() {
                           </button>
                         </>
                       ) : (
-                        <span className={`${styles.statusPill} ${styles[`status_${n.status}`]}`}>
-                          {n.status}
-                        </span>
+                        <>
+                          <span className={`${styles.statusPill} ${styles[`status_${n.status}`]}`}>
+                            {n.status}
+                          </span>
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={() => deleteNotification(n.id)}
+                            disabled={deleting === n.id}
+                            aria-label="Delete notification"
+                          >
+                            {deleting === n.id ? "…" : (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                              </svg>
+                            )}
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -185,9 +212,23 @@ export default function InboxPage() {
                           </button>
                         </>
                       ) : (
-                        <span className={`${styles.statusPill} ${styles[`status_${n.status}`]}`}>
-                          {n.status}
-                        </span>
+                        <>
+                          <span className={`${styles.statusPill} ${styles[`status_${n.status}`]}`}>
+                            {n.status}
+                          </span>
+                          <button
+                            className={styles.deleteBtn}
+                            onClick={() => deleteNotification(n.id)}
+                            disabled={deleting === n.id}
+                            aria-label="Delete notification"
+                          >
+                            {deleting === n.id ? "…" : (
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                              </svg>
+                            )}
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>

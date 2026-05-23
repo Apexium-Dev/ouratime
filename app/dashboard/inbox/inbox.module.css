@@ -151,6 +151,28 @@
 .status_declined  { background: rgba(220,38,38,0.1); color: #dc2626; }
 .status_cancelled { background: #f0efed; color: #aaa; }
 
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  flex-shrink: 0;
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.deleteBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .empty {
   text-align: center;
   padding: 4rem;
