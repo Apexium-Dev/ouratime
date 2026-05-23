@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 import { EditEntryModal, type EntryForEdit } from "@/components/EditEntryModal";
@@ -68,12 +68,26 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [, setTick] = useState(0);
   const [editingEntry, setEditingEntry] = useState<EntryRow | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterProject, setFilterProject] = useState("");
+  const [projectDropOpen, setProjectDropOpen] = useState(false);
+  const projectDropRef = useRef<HTMLDivElement>(null);
 
   // setMounted on first client render, then tick every second for live durations
   useEffect(() => {
     setMounted(true);
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (projectDropRef.current && !projectDropRef.current.contains(e.target as Node)) {
+        setProjectDropOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -155,6 +169,30 @@ export default function DashboardPage() {
     }
   }
 
+  // ── Unique projects for filter dropdown ─────────────────────
+  const projectOptions = Array.from(
+    new Map(
+      entries
+        .filter((e) => e.project_id && e.projects)
+        .map((e) => [e.project_id!, e.projects!]),
+    ).entries(),
+  ).map(([id, proj]) => ({ id, ...proj }));
+
+  // ── Filtered groups ──────────────────────────────────────────
+  const q = searchQuery.toLowerCase().trim();
+  const filteredGroups = groups
+    .map((g) => ({
+      ...g,
+      entries: g.entries.filter((e) => {
+        if (q && !e.description?.toLowerCase().includes(q)) return false;
+        if (filterProject && e.project_id !== filterProject) return false;
+        return true;
+      }),
+    }))
+    .filter((g) => g.entries.length > 0);
+
+  const isFiltering = q.length > 0 || filterProject.length > 0;
+
   // ── Resume handler ──────────────────────────────────────────
   const resume = (entry: EntryRow) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -213,6 +251,80 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* ── Search / filter ── */}
+        {entries.length > 0 && (
+          <div className={styles.filterBar}>
+            <div className={styles.searchWrap}>
+              <svg className={styles.searchIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input
+                className={styles.searchInput}
+                type="text"
+                placeholder="Search entries…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button className={styles.searchClear} onClick={() => setSearchQuery("")} aria-label="Clear search">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+            <div className={styles.projectDropWrap} ref={projectDropRef}>
+              <button
+                className={`${styles.projectDropBtn} ${filterProject ? styles.projectDropBtnActive : ""}`}
+                onClick={() => setProjectDropOpen((v) => !v)}
+              >
+                {filterProject ? (
+                  <>
+                    <span
+                      className={styles.projectDropDot}
+                      style={{ background: projectOptions.find((p) => p.id === filterProject)?.color }}
+                    />
+                    <span className={styles.projectDropLabel}>
+                      {projectOptions.find((p) => p.id === filterProject)?.name}
+                    </span>
+                  </>
+                ) : (
+                  <span className={styles.projectDropLabel}>All projects</span>
+                )}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
+              {projectDropOpen && (
+                <div className={styles.projectDropMenu}>
+                  <button
+                    className={`${styles.projectDropItem} ${!filterProject ? styles.projectDropItemActive : ""}`}
+                    onClick={() => { setFilterProject(""); setProjectDropOpen(false); }}
+                  >
+                    <span className={styles.projectDropDot} style={{ background: "#d4d0cc" }} />
+                    All projects
+                  </button>
+                  {projectOptions.map((p) => (
+                    <button
+                      key={p.id}
+                      className={`${styles.projectDropItem} ${filterProject === p.id ? styles.projectDropItemActive : ""}`}
+                      onClick={() => { setFilterProject(p.id); setProjectDropOpen(false); }}
+                    >
+                      <span className={styles.projectDropDot} style={{ background: p.color }} />
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {isFiltering && (
+              <button className={styles.clearFilters} onClick={() => { setSearchQuery(""); setFilterProject(""); }}>
+                Clear
+              </button>
+            )}
+          </div>
+        )}
+
         {/* ── Entries ── */}
         {groups.length === 0 ? (
           <div className={styles.emptyState}>
@@ -231,9 +343,17 @@ export default function DashboardPage() {
             <p>No time entries yet.</p>
             <p>Start the timer above to track your first entry.</p>
           </div>
+        ) : filteredGroups.length === 0 ? (
+          <div className={styles.emptyState}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ddd" strokeWidth="1.5" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <p>No entries match your search.</p>
+            <p>Try different keywords or clear the filters.</p>
+          </div>
         ) : (
           <div className={styles.groups}>
-            {groups.map((g) => {
+            {filteredGroups.map((g) => {
               const groupTotal = g.entries.reduce(
                 (s, e) => s + entryDuration(e, mounted),
                 0,
