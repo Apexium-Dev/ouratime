@@ -23,6 +23,36 @@
   width: fit-content;
 }
 
+/* ── Top-bar right cluster ── */
+.topBarRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* ── Export button ── */
+.exportBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0 1rem;
+  background: #008080;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.exportBtn:hover {
+  background: #006666;
+}
+
 /* ── Customize button + dropdown ── */
 .customizeWrap {
   position: relative;

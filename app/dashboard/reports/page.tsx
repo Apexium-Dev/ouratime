@@ -6,6 +6,7 @@ import styles from "./reports.module.css";
 
 interface Entry {
   id: string;
+  description: string | null;
   started_at: string;
   stopped_at: string | null;
   duration: number | null;
@@ -274,6 +275,42 @@ function BarChart({
   );
 }
 
+// ── CSV export ───────────────────────────────────────────────────────────────
+function exportCSV(entries: Entry[], profileRate: number, period: string) {
+  const header = ["Date", "Description", "Project", "Start", "End", "Duration (h)", "Billable", "Amount (USD)"];
+  const rows = entries.map((e) => {
+    const dur = e.duration ?? 0;
+    const rate = (e.projects?.hourly_rate ?? 0) > 0 ? e.projects!.hourly_rate : profileRate;
+    const amount = e.billable ? (dur / 3600) * rate : 0;
+    const started = new Date(e.started_at);
+    const stopped = e.stopped_at ? new Date(e.stopped_at) : null;
+    return [
+      started.toLocaleDateString(),
+      e.description ?? "",
+      e.projects?.name ?? "No project",
+      started.toLocaleTimeString(),
+      stopped ? stopped.toLocaleTimeString() : "",
+      (dur / 3600).toFixed(2),
+      e.billable ? "Yes" : "No",
+      amount > 0 ? amount.toFixed(2) : "",
+    ];
+  });
+
+  const csv = [header, ...rows]
+    .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
+    .join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `ouratime-report-${period}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function ReportsPage() {
   const [period, setPeriod] = useState<Period>("7d");
@@ -308,7 +345,7 @@ export default function ReportsPage() {
       const { data } = await supabase
         .from("time_entries")
         .select(
-          "id, started_at, stopped_at, duration, billable, project_id, projects(name,color,hourly_rate)",
+          "id, description, started_at, stopped_at, duration, billable, project_id, projects(name,color,hourly_rate)",
         )
         .gte("started_at", from.toISOString())
         .lte("started_at", to.toISOString())
@@ -318,6 +355,7 @@ export default function ReportsPage() {
       // Properly map the data, handling potential array returns from FK queries
       const mappedEntries: Entry[] = (data ?? []).map((item: any) => ({
         id: item.id,
+        description: item.description ?? null,
         started_at: item.started_at,
         stopped_at: item.stopped_at,
         duration: item.duration,
@@ -446,7 +484,20 @@ export default function ReportsPage() {
           ))}
         </div>
 
-        <div className={styles.customizeWrap}>
+        <div className={styles.topBarRight}>
+          {!isEmpty && (
+            <button
+              className={styles.exportBtn}
+              onClick={() => exportCSV(entries, profileRate, period)}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export CSV
+            </button>
+          )}
+
+          <div className={styles.customizeWrap}>
           <button className={styles.customizeBtn} onClick={() => setShowCustomize(v => !v)}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3"/>
@@ -470,6 +521,7 @@ export default function ReportsPage() {
               ))}
             </div>
           )}
+          </div>
         </div>
       </div>
 
