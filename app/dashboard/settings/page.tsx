@@ -11,7 +11,10 @@ import {
 } from "@/lib/sidebarConfig";
 import styles from "./settings.module.css";
 
-type Tab = "profile" | "time" | "billing" | "sidebar" | "security";
+type Tab = "profile" | "time" | "billing" | "sidebar" | "security" | "focus";
+
+const FOCUS_MODE_KEY = "ouratime:focus-mode";
+const FOCUS_ANIM_KEY = "ouratime:focus-animations";
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<Tab>("profile");
@@ -51,6 +54,10 @@ export default function SettingsPage() {
   const [pwSaved, setPwSaved]     = useState(false);
   const [pwError, setPwError]     = useState("");
 
+  // ── Focus mode ─────────────────────────────────────────
+  const [focusMode, setFocusModeState] = useState(true);
+  const [focusAnimations, setFocusAnimationsState] = useState(true);
+
   // ── Sidebar ───────────────────────────────────────────
   const [sidebarConfig, setSidebarConfig] = useState<SidebarEntry[]>(() =>
     NAV_ITEMS.map((n) => ({ href: n.href, visible: true })),
@@ -80,6 +87,10 @@ export default function SettingsPage() {
       }
     });
     setSidebarConfig(loadSidebarConfig());
+    const fm = localStorage.getItem(FOCUS_MODE_KEY);
+    const fa = localStorage.getItem(FOCUS_ANIM_KEY);
+    if (fm !== null) setFocusModeState(fm === "true");
+    if (fa !== null) setFocusAnimationsState(fa === "true");
   }, []);
 
   // ── Avatar pick ───────────────────────────────────────
@@ -231,6 +242,20 @@ export default function SettingsPage() {
     setTimeout(() => setPwSaved(false), 3000);
   };
 
+  // ── Focus mode toggles ────────────────────────────────
+  const toggleFocusMode = () => {
+    const next = !focusMode;
+    setFocusModeState(next);
+    localStorage.setItem(FOCUS_MODE_KEY, String(next));
+    window.dispatchEvent(new CustomEvent("ouratime:focus-settings-changed"));
+  };
+  const toggleFocusAnimations = () => {
+    const next = !focusAnimations;
+    setFocusAnimationsState(next);
+    localStorage.setItem(FOCUS_ANIM_KEY, String(next));
+    window.dispatchEvent(new CustomEvent("ouratime:focus-settings-changed"));
+  };
+
   // ── Sidebar ───────────────────────────────────────────
   const toggleVisible = (href: string) => {
     const next = sidebarConfig.map((e) =>
@@ -356,6 +381,25 @@ export default function SettingsPage() {
             <path d="M7 11V7a5 5 0 0110 0v4" />
           </svg>
           Security
+        </button>
+        <button
+          className={`${styles.tabBtn} ${tab === "focus" ? styles.tabBtnActive : ""}`}
+          onClick={() => setTab("focus")}
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Focus
         </button>
       </div>
 
@@ -680,6 +724,49 @@ export default function SettingsPage() {
                 {pwSaving ? "Updating…" : "Update password"}
               </button>
             </form>
+          </section>
+        </div>
+      )}
+
+      {/* ── Focus ── */}
+      {tab === "focus" && (
+        <div className={styles.cards}>
+          <section className={styles.card}>
+            <h2 className={styles.sectionTitle}>Focus mode</h2>
+            <p className={styles.sectionDesc}>
+              Configure the full-screen timer that appears when you start tracking.
+            </p>
+            <div className={styles.toggleList}>
+              <div className={styles.toggleRow}>
+                <div>
+                  <p className={styles.toggleLabel}>Enable focus mode</p>
+                  <p className={styles.toggleDesc}>Open full-screen view automatically when a timer starts.</p>
+                </div>
+                <button
+                  className={`${styles.toggleSwitch} ${focusMode ? styles.toggleSwitchOn : ""}`}
+                  onClick={toggleFocusMode}
+                  role="switch"
+                  aria-checked={focusMode}
+                >
+                  <span className={styles.toggleThumb} />
+                </button>
+              </div>
+              <div className={`${styles.toggleRow} ${!focusMode ? styles.toggleRowDisabled : ""}`}>
+                <div>
+                  <p className={styles.toggleLabel}>Breathing animation</p>
+                  <p className={styles.toggleDesc}>Show a slow pulsing glow behind the timer.</p>
+                </div>
+                <button
+                  className={`${styles.toggleSwitch} ${focusAnimations ? styles.toggleSwitchOn : ""}`}
+                  onClick={toggleFocusAnimations}
+                  disabled={!focusMode}
+                  role="switch"
+                  aria-checked={focusAnimations}
+                >
+                  <span className={styles.toggleThumb} />
+                </button>
+              </div>
+            </div>
           </section>
         </div>
       )}

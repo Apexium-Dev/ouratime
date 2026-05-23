@@ -3,8 +3,18 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { CreateProjectModal } from "./CreateProjectModal";
+import { FocusTimer } from "./FocusTimer";
 import { TagPicker, type Tag } from "./TagPicker";
 import styles from "./DashboardNavbar.module.css";
+
+const FOCUS_MODE_KEY = "ouratime:focus-mode";
+const FOCUS_ANIM_KEY = "ouratime:focus-animations";
+
+function getFocusSetting(key: string, defaultVal = true): boolean {
+  if (typeof window === "undefined") return defaultVal;
+  const v = localStorage.getItem(key);
+  return v === null ? defaultVal : v === "true";
+}
 
 interface Project   { id: string; name: string; color: string; }
 interface Task      { id: string; name: string; project_id: string; }
@@ -52,6 +62,11 @@ export function DashboardNavbar() {
   const [activeEntryId, setActiveEntryId] = useState<string | null>(null);
   const [scrolled, setScrolled]       = useState(false);
 
+  // Focus mode
+  const [showFocus, setShowFocus]     = useState(false);
+  const [focusEnabled, setFocusEnabled] = useState(true);
+  const [focusAnimations, setFocusAnimations] = useState(true);
+
   const intervalRef      = useRef<ReturnType<typeof setInterval> | null>(null);
   const suggestionsRef   = useRef<HTMLDivElement>(null);
   const projectDropRef   = useRef<HTMLDivElement>(null);
@@ -61,6 +76,18 @@ export function DashboardNavbar() {
   // Keep refs in sync so async handlers always see current values
   useEffect(() => { activeEntryIdRef.current = activeEntryId; }, [activeEntryId]);
   useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
+
+  // Load focus settings from localStorage
+  useEffect(() => {
+    setFocusEnabled(getFocusSetting(FOCUS_MODE_KEY, true));
+    setFocusAnimations(getFocusSetting(FOCUS_ANIM_KEY, true));
+    function onSettingsChange() {
+      setFocusEnabled(getFocusSetting(FOCUS_MODE_KEY, true));
+      setFocusAnimations(getFocusSetting(FOCUS_ANIM_KEY, true));
+    }
+    window.addEventListener("ouratime:focus-settings-changed", onSettingsChange);
+    return () => window.removeEventListener("ouratime:focus-settings-changed", onSettingsChange);
+  }, []);
 
   // ── Scroll shadow ──────────────────────────────────────────
   useEffect(() => {
@@ -200,6 +227,7 @@ export function DashboardNavbar() {
       setRunning(true);
       setShowSuggestions(false);
       window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
+      if (getFocusSetting(FOCUS_MODE_KEY, true)) setShowFocus(true);
     }
   }, [tasks, selectedWorkspace, setTasks]);
 
@@ -268,6 +296,7 @@ export function DashboardNavbar() {
     setSelectedWorkspace(null);
     setBillable(true);
     setElapsed(0);
+    setShowFocus(false);
     window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
   };
 
@@ -285,6 +314,17 @@ export function DashboardNavbar() {
 
   return (
     <>
+      {showFocus && running && (
+        <FocusTimer
+          elapsed={elapsed}
+          description={description}
+          project={selectedProject}
+          animations={focusAnimations}
+          onStop={() => { setShowFocus(false); handleStop(); }}
+          onMinimize={() => setShowFocus(false)}
+        />
+      )}
+
       <header className={`${styles.navbar} ${scrolled ? styles.navbarScrolled : ""}`}>
         <div className={styles.container}>
 

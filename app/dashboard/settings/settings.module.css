@@ -392,6 +392,68 @@
 .error   { font-size: 0.875rem; color: #dc2626; margin: 0; }
 .success { font-size: 0.875rem; color: #008080; font-weight: 600; margin: 0; }
 
+/* ── Toggle list (focus mode settings) ── */
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.125rem 0;
+  border-bottom: 1px solid #f0eeec;
+}
+
+.toggleRow:last-child { border-bottom: none; }
+
+.toggleRowDisabled { opacity: 0.4; pointer-events: none; }
+
+.toggleLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111;
+  margin: 0 0 0.2rem;
+}
+
+.toggleDesc {
+  font-size: 0.8125rem;
+  color: #888;
+  margin: 0;
+}
+
+.toggleSwitch {
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  border-radius: 9999px;
+  border: none;
+  background: #d4d0cc;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  padding: 0;
+}
+
+.toggleSwitchOn { background: #008080; }
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+
+.toggleSwitchOn .toggleThumb { transform: translateX(20px); }
+
 /* ── Sidebar visibility list ── */
 .resetBtn {
   height: 30px;
