@@ -39,10 +39,15 @@ function toTimeVal(iso: string) {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-function applyTime(baseIso: string, timeVal: string) {
-  const d = new Date(baseIso);
+function toDateVal(iso: string) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function applyDateTime(dateVal: string, timeVal: string) {
+  const [year, month, day] = dateVal.split("-").map(Number);
   const [h, m] = timeVal.split(":").map(Number);
-  d.setHours(h, m, 0, 0);
+  const d = new Date(year, month - 1, day, h, m, 0, 0);
   return d.toISOString();
 }
 
@@ -75,7 +80,11 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
       .filter((t): t is Tag => t !== null),
   );
   const [billable, setBillable] = useState(entry.billable);
+  const [startDate, setStartDate] = useState(toDateVal(entry.started_at));
   const [startTime, setStartTime] = useState(toTimeVal(entry.started_at));
+  const [stopDate, setStopDate] = useState(
+    entry.stopped_at ? toDateVal(entry.stopped_at) : "",
+  );
   const [stopTime, setStopTime] = useState(
     entry.stopped_at ? toTimeVal(entry.stopped_at) : "",
   );
@@ -100,14 +109,15 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
   }, []);
 
   // Derived times
-  const startIso = applyTime(entry.started_at, startTime);
+  const startIso = applyDateTime(startDate, startTime);
   const stopIso =
-    stopTime && entry.stopped_at
-      ? applyTime(entry.stopped_at, stopTime)
+    stopTime && stopDate
+      ? applyDateTime(stopDate, stopTime)
       : entry.stopped_at;
   const duration = stopIso ? secondsBetween(startIso, stopIso) : null;
 
   const handleSave = async () => {
+    if (duration !== null && duration < 0) return;
     setSaving(true);
     const patch: Record<string, unknown> = {
       description: description.trim(),
@@ -309,29 +319,45 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
             <div className={styles.timeRow}>
               <div className={styles.timeGroup}>
                 <span className={styles.timeSubLabel}>Start</span>
-                <input
-                  type="time"
-                  className={styles.timeInput}
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                />
+                <div className={styles.dateTimeRow}>
+                  <input
+                    type="date"
+                    className={styles.dateInput}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                  <input
+                    type="time"
+                    className={styles.timeInput}
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                  />
+                </div>
               </div>
               {entry.stopped_at && (
                 <>
                   <span className={styles.timeSep}>–</span>
                   <div className={styles.timeGroup}>
                     <span className={styles.timeSubLabel}>End</span>
-                    <input
-                      type="time"
-                      className={styles.timeInput}
-                      value={stopTime}
-                      onChange={(e) => setStopTime(e.target.value)}
-                    />
+                    <div className={styles.dateTimeRow}>
+                      <input
+                        type="date"
+                        className={styles.dateInput}
+                        value={stopDate}
+                        onChange={(e) => setStopDate(e.target.value)}
+                      />
+                      <input
+                        type="time"
+                        className={styles.timeInput}
+                        value={stopTime}
+                        onChange={(e) => setStopTime(e.target.value)}
+                      />
+                    </div>
                   </div>
                   <div className={styles.timeGroup}>
                     <span className={styles.timeSubLabel}>Duration</span>
-                    <span className={styles.durDisplay}>
-                      {duration !== null ? fmtDur(duration) : "—"}
+                    <span className={`${styles.durDisplay} ${duration !== null && duration < 0 ? styles.durError : ""}`}>
+                      {duration !== null && duration >= 0 ? fmtDur(duration) : "Invalid"}
                     </span>
                   </div>
                 </>

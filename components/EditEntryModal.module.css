@@ -170,7 +170,7 @@
 /* ── Time row ── */
 .timeRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   flex-wrap: wrap;
 }
@@ -179,6 +179,30 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.dateTimeRow {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.dateInput {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid #e5e2de;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: #050505;
+  background: #fafaf9;
+  outline: none;
+  transition: border-color 0.12s, box-shadow 0.12s;
+  width: 130px;
+}
+
+.dateInput:focus {
+  border-color: #008080;
+  box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
+  background: #fff;
 }
 
 .timeSubLabel {
@@ -225,6 +249,8 @@
   color: #444;
   padding: 0 0.25rem;
 }
+
+.durError { color: #dc2626; }
 
 .runningBadge {
   display: inline-flex;
