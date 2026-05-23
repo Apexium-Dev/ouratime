@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./dashboard.module.css";
 import { EditEntryModal, type EntryForEdit } from "@/components/EditEntryModal";
@@ -90,45 +90,48 @@ export default function DashboardPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    async function load() {
-      const since = new Date();
-      since.setDate(since.getDate() - 30);
+  const loadEntries = useCallback(async () => {
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
 
-      const { data } = await supabase
-        .from("time_entries")
-        .select(
-          `
-          id, description, started_at, stopped_at, duration, billable, project_id,
-          projects (name, color),
-          time_entry_tags (tags (id, name, color))
-        `,
-        )
-        .gte("started_at", since.toISOString())
-        .order("started_at", { ascending: false });
+    const { data } = await supabase
+      .from("time_entries")
+      .select(
+        `
+        id, description, started_at, stopped_at, duration, billable, project_id,
+        projects (name, color),
+        time_entry_tags (tags (id, name, color))
+      `,
+      )
+      .gte("started_at", since.toISOString())
+      .order("started_at", { ascending: false });
 
-      // Properly map the data, handling potential array returns from FK queries
-      const mappedEntries: EntryRow[] = (data ?? []).map((item: any) => ({
-        id: item.id,
-        description: item.description,
-        started_at: item.started_at,
-        stopped_at: item.stopped_at,
-        duration: item.duration,
-        billable: item.billable,
-        project_id: item.project_id,
-        projects: item.projects
-          ? Array.isArray(item.projects)
-            ? item.projects[0]
-            : item.projects
-          : null,
-        time_entry_tags: item.time_entry_tags ?? [],
-      }));
+    const mappedEntries: EntryRow[] = (data ?? []).map((item: any) => ({
+      id: item.id,
+      description: item.description,
+      started_at: item.started_at,
+      stopped_at: item.stopped_at,
+      duration: item.duration,
+      billable: item.billable,
+      project_id: item.project_id,
+      projects: item.projects
+        ? Array.isArray(item.projects)
+          ? item.projects[0]
+          : item.projects
+        : null,
+      time_entry_tags: item.time_entry_tags ?? [],
+    }));
 
-      setEntries(mappedEntries);
-      setLoading(false);
-    }
-    load();
+    setEntries(mappedEntries);
+    setLoading(false);
   }, []);
+
+  useEffect(() => { loadEntries(); }, [loadEntries]);
+
+  useEffect(() => {
+    window.addEventListener("ouratime:timer-changed", loadEntries);
+    return () => window.removeEventListener("ouratime:timer-changed", loadEntries);
+  }, [loadEntries]);
 
   // ── Weekly stats ────────────────────────────────────────────
   const monday = startOfWeek();

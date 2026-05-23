@@ -52,9 +52,15 @@ export function DashboardNavbar() {
   const [activeEntryId, setActiveEntryId] = useState<string | null>(null);
   const [scrolled, setScrolled]       = useState(false);
 
-  const intervalRef    = useRef<ReturnType<typeof setInterval> | null>(null);
-  const suggestionsRef = useRef<HTMLDivElement>(null);
-  const projectDropRef = useRef<HTMLDivElement>(null);
+  const intervalRef      = useRef<ReturnType<typeof setInterval> | null>(null);
+  const suggestionsRef   = useRef<HTMLDivElement>(null);
+  const projectDropRef   = useRef<HTMLDivElement>(null);
+  const activeEntryIdRef = useRef<string | null>(null);
+  const elapsedRef       = useRef<number>(0);
+
+  // Keep refs in sync so async handlers always see current values
+  useEffect(() => { activeEntryIdRef.current = activeEntryId; }, [activeEntryId]);
+  useEffect(() => { elapsedRef.current = elapsed; }, [elapsed]);
 
   // ── Scroll shadow ──────────────────────────────────────────
   useEffect(() => {
@@ -139,50 +145,29 @@ export function DashboardNavbar() {
     return () => window.removeEventListener("ouratime:projects-changed", loadProjects);
   }, [loadProjects]);
 
-  // ── Resume event from dashboard ───────────────────────────
-  useEffect(() => {
-    function handle(e: Event) {
-      const { description: desc, project, tags, billable: b } =
-        (e as CustomEvent).detail;
-      setDescription(desc ?? "");
-      setSelectedTask(null);
-      setSelectedProject(project ?? null);
-      setSelectedTags(tags ?? []);
-      setBillable(b ?? true);
-    }
-    window.addEventListener("ouratime:resume", handle);
-    return () => window.removeEventListener("ouratime:resume", handle);
-  }, []);
-
-  // ── Timer interval ─────────────────────────────────────────
-  useEffect(() => {
-    if (running) {
-      intervalRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
-    } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [running]);
-
-  // ── Start ──────────────────────────────────────────────────
-  const handleStart = async () => {
-    if (!description.trim()) return;
+  // ── Core start logic (accepts explicit params to avoid stale state) ──────────
+  const startWith = useCallback(async (
+    desc: string,
+    project: Project | null,
+    tags: Tag[],
+    bill: boolean,
+  ) => {
+    const trimmed = desc.trim();
+    if (!trimmed) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    let taskId: string | null = selectedTask?.id ?? null;
-
-    // Create task if it doesn't exist yet
-    if (!taskId && selectedProject) {
+    let taskId: string | null = null;
+    if (project) {
       const exactMatch = tasks.find(
-        (t) => t.name.toLowerCase() === description.trim().toLowerCase()
+        (t) => t.name.toLowerCase() === trimmed.toLowerCase()
       );
       if (exactMatch) {
         taskId = exactMatch.id;
       } else {
         const { data: newTask } = await supabase
           .from("tasks")
-          .insert({ user_id: user.id, project_id: selectedProject.id, name: description.trim() })
+          .insert({ user_id: user.id, project_id: project.id, name: trimmed })
           .select().single();
         if (newTask) {
           taskId = newTask.id;
@@ -195,28 +180,75 @@ export function DashboardNavbar() {
       .from("time_entries")
       .insert({
         user_id:      user.id,
-        project_id:   selectedProject?.id ?? null,
+        project_id:   project?.id ?? null,
         task_id:      taskId,
-        description:  description.trim(),
+        description:  trimmed,
         started_at:   new Date().toISOString(),
-        billable,
+        billable:     bill,
         workspace_id: selectedWorkspace?.id ?? null,
       })
       .select().single();
 
     if (entry) {
-      // Save tags
-      if (selectedTags.length > 0) {
+      if (tags.length > 0) {
         await supabase.from("time_entry_tags").insert(
-          selectedTags.map((t) => ({ time_entry_id: entry.id, tag_id: t.id }))
+          tags.map((t) => ({ time_entry_id: entry.id, tag_id: t.id }))
         );
       }
       setActiveEntryId(entry.id);
       setElapsed(0);
       setRunning(true);
       setShowSuggestions(false);
+      window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
     }
-  };
+  }, [tasks, selectedWorkspace, setTasks]);
+
+  // ── Start ──────────────────────────────────────────────────
+  const handleStart = () =>
+    startWith(description, selectedProject, selectedTags, billable);
+
+  // ── Timer interval ─────────────────────────────────────────
+  useEffect(() => {
+    if (running) {
+      intervalRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [running]);
+
+  // ── Resume event from dashboard ───────────────────────────
+  useEffect(() => {
+    async function handle(e: Event) {
+      const { description: desc, project, tags, billable: b } =
+        (e as CustomEvent).detail;
+      const d = desc ?? "";
+      const p = project ?? null;
+      const t = tags ?? [];
+      const bill = b ?? true;
+
+      // Stop current timer if one is running
+      if (activeEntryIdRef.current) {
+        const stoppedAt = new Date().toISOString();
+        await supabase.from("time_entries").update({
+          stopped_at: stoppedAt,
+          duration:   elapsedRef.current,
+        }).eq("id", activeEntryIdRef.current);
+        setRunning(false);
+        setActiveEntryId(null);
+        setElapsed(0);
+      }
+
+      setDescription(d);
+      setSelectedTask(null);
+      setSelectedProject(p);
+      setSelectedTags(t);
+      setBillable(bill);
+      startWith(d, p, t, bill);
+    }
+    window.addEventListener("ouratime:resume", handle);
+    return () => window.removeEventListener("ouratime:resume", handle);
+  }, [startWith]);
 
   // ── Stop ───────────────────────────────────────────────────
   const handleStop = async () => {
@@ -236,6 +268,7 @@ export function DashboardNavbar() {
     setSelectedWorkspace(null);
     setBillable(true);
     setElapsed(0);
+    window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
   };
 
   // ── Select task from suggestion ────────────────────────────

@@ -167,108 +167,143 @@
   color: #ccc;
 }
 
-/* ── Time row ── */
-.timeRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.timeGroup {
+/* ── Time card (timeline style) ── */
+.timeCard {
+  border: 1px solid #e5e2de;
+  border-radius: 14px;
+  padding: 1rem 1.125rem;
+  background: #fafaf9;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
 }
 
-.dateTimeRow {
+.timeCardRow {
   display: flex;
-  gap: 0.4rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.timePin {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #008080;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(0,128,128,0.12);
+}
+
+.timeCardLbl {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #aaa;
+  width: 30px;
+  flex-shrink: 0;
 }
 
 .dateInput {
-  padding: 0.5rem 0.6rem;
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.625rem;
   border: 1px solid #e5e2de;
-  border-radius: 10px;
+  border-radius: 9px;
   font-size: 0.875rem;
   font-family: inherit;
   color: #050505;
-  background: #fafaf9;
+  background: #fff;
   outline: none;
   transition: border-color 0.12s, box-shadow 0.12s;
-  width: 130px;
 }
 
 .dateInput:focus {
   border-color: #008080;
   box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
-  background: #fff;
-}
-
-.timeSubLabel {
-  font-size: 0.68rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: #aaa;
 }
 
 .timeInput {
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.625rem;
   border: 1px solid #e5e2de;
-  border-radius: 10px;
+  border-radius: 9px;
   font-size: 0.9375rem;
   font-family: inherit;
   font-variant-numeric: tabular-nums;
   color: #050505;
-  background: #fafaf9;
+  background: #fff;
   outline: none;
   transition: border-color 0.12s, box-shadow 0.12s;
-  width: 108px;
+  width: 96px;
+  flex-shrink: 0;
 }
 
 .timeInput:focus {
   border-color: #008080;
   box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
-  background: #fff;
 }
 
-.timeSep {
-  color: #ccc;
-  margin-top: 1.2rem;
-  font-size: 1.1rem;
-}
-
-.durDisplay {
+.timeConnector {
   display: flex;
   align-items: center;
-  height: 38px;
-  font-size: 0.9375rem;
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  color: #444;
-  padding: 0 0.25rem;
+  gap: 0.625rem;
+  padding: 0.3rem 0;
+  margin-left: 3.5px;
 }
 
-.durError { color: #dc2626; }
+.timeConnectorLine {
+  width: 2px;
+  height: 18px;
+  background: #e5e2de;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.durBadge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #888;
+  background: #f0eeec;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.durBadgeError {
+  color: #dc2626;
+  background: #fef2f2;
+}
 
 .runningBadge {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  margin-top: 1.2rem;
   font-size: 0.75rem;
   font-weight: 700;
   color: #008080;
-  background: rgba(0, 128, 128, 0.1);
-  padding: 0.25rem 0.75rem;
+  background: rgba(0, 128, 128, 0.08);
+  padding: 0.2rem 0.625rem;
   border-radius: 9999px;
+}
+
+.runningDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34,197,94,0.25);
+  animation: pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* ── Billable toggle ── */
 .billableBtn {
   display: inline-flex;
   align-items: center;
+  align-self: flex-start;
   gap: 0.45rem;
   padding: 0.4rem 0.875rem;
   border-radius: 9999px;

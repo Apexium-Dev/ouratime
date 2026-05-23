@@ -316,54 +316,61 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
           {/* Time */}
           <div className={styles.field}>
             <label className={styles.label}>Time</label>
-            <div className={styles.timeRow}>
-              <div className={styles.timeGroup}>
-                <span className={styles.timeSubLabel}>Start</span>
-                <div className={styles.dateTimeRow}>
-                  <input
-                    type="date"
-                    className={styles.dateInput}
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                  />
-                  <input
-                    type="time"
-                    className={styles.timeInput}
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
-                </div>
+            <div className={styles.timeCard}>
+              {/* Start row */}
+              <div className={styles.timeCardRow}>
+                <div className={styles.timePin} />
+                <span className={styles.timeCardLbl}>Start</span>
+                <input
+                  type="date"
+                  className={styles.dateInput}
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <input
+                  type="time"
+                  className={styles.timeInput}
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
               </div>
-              {entry.stopped_at && (
+
+              {entry.stopped_at ? (
                 <>
-                  <span className={styles.timeSep}>–</span>
-                  <div className={styles.timeGroup}>
-                    <span className={styles.timeSubLabel}>End</span>
-                    <div className={styles.dateTimeRow}>
-                      <input
-                        type="date"
-                        className={styles.dateInput}
-                        value={stopDate}
-                        onChange={(e) => setStopDate(e.target.value)}
-                      />
-                      <input
-                        type="time"
-                        className={styles.timeInput}
-                        value={stopTime}
-                        onChange={(e) => setStopTime(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.timeGroup}>
-                    <span className={styles.timeSubLabel}>Duration</span>
-                    <span className={`${styles.durDisplay} ${duration !== null && duration < 0 ? styles.durError : ""}`}>
-                      {duration !== null && duration >= 0 ? fmtDur(duration) : "Invalid"}
+                  {/* Connector with duration */}
+                  <div className={styles.timeConnector}>
+                    <div className={styles.timeConnectorLine} />
+                    <span className={`${styles.durBadge} ${duration !== null && duration < 0 ? styles.durBadgeError : ""}`}>
+                      {duration !== null && duration >= 0 ? fmtDur(duration) : "End before start"}
                     </span>
                   </div>
+
+                  {/* End row */}
+                  <div className={styles.timeCardRow}>
+                    <div className={styles.timePin} />
+                    <span className={styles.timeCardLbl}>End</span>
+                    <input
+                      type="date"
+                      className={styles.dateInput}
+                      value={stopDate}
+                      onChange={(e) => setStopDate(e.target.value)}
+                    />
+                    <input
+                      type="time"
+                      className={styles.timeInput}
+                      value={stopTime}
+                      onChange={(e) => setStopTime(e.target.value)}
+                    />
+                  </div>
                 </>
-              )}
-              {!entry.stopped_at && (
-                <span className={styles.runningBadge}>Running</span>
+              ) : (
+                <div className={styles.timeConnector}>
+                  <div className={styles.timeConnectorLine} />
+                  <span className={styles.runningBadge}>
+                    <span className={styles.runningDot} />
+                    Running
+                  </span>
+                </div>
               )}
             </div>
           </div>
