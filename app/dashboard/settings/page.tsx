@@ -11,7 +11,7 @@ import {
 } from "@/lib/sidebarConfig";
 import styles from "./settings.module.css";
 
-type Tab = "profile" | "time" | "billing" | "sidebar";
+type Tab = "profile" | "time" | "billing" | "sidebar" | "security";
 
 export default function SettingsPage() {
   const [tab, setTab] = useState<Tab>("profile");
@@ -42,6 +42,14 @@ export default function SettingsPage() {
   const [billingSaving, setBillingSaving] = useState(false);
   const [billingSaved, setBillingSaved] = useState(false);
   const [billingError, setBillingError] = useState("");
+
+  // ── Security ──────────────────────────────────────────
+  const [currentPw, setCurrentPw] = useState("");
+  const [newPw, setNewPw]         = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [pwSaving, setPwSaving]   = useState(false);
+  const [pwSaved, setPwSaved]     = useState(false);
+  const [pwError, setPwError]     = useState("");
 
   // ── Sidebar ───────────────────────────────────────────
   const [sidebarConfig, setSidebarConfig] = useState<SidebarEntry[]>(() =>
@@ -190,6 +198,39 @@ export default function SettingsPage() {
     setTimeout(() => setBillingSaved(false), 3000);
   };
 
+  // ── Change password ───────────────────────────────────
+  const changePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError("");
+    setPwSaved(false);
+    if (newPw.length < 8) {
+      setPwError("New password must be at least 8 characters.");
+      return;
+    }
+    if (newPw !== confirmPw) {
+      setPwError("Passwords do not match.");
+      return;
+    }
+    setPwSaving(true);
+    const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password: currentPw });
+    if (signInErr) {
+      setPwError("Current password is incorrect.");
+      setPwSaving(false);
+      return;
+    }
+    const { error } = await supabase.auth.updateUser({ password: newPw });
+    setPwSaving(false);
+    if (error) {
+      setPwError(error.message);
+      return;
+    }
+    setCurrentPw("");
+    setNewPw("");
+    setConfirmPw("");
+    setPwSaved(true);
+    setTimeout(() => setPwSaved(false), 3000);
+  };
+
   // ── Sidebar ───────────────────────────────────────────
   const toggleVisible = (href: string) => {
     const next = sidebarConfig.map((e) =>
@@ -296,6 +337,25 @@ export default function SettingsPage() {
             <line x1="9" y1="3" x2="9" y2="21" />
           </svg>
           Sidebar
+        </button>
+        <button
+          className={`${styles.tabBtn} ${tab === "security" ? styles.tabBtnActive : ""}`}
+          onClick={() => setTab("security")}
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0110 0v4" />
+          </svg>
+          Security
         </button>
       </div>
 
@@ -563,6 +623,61 @@ export default function SettingsPage() {
                 disabled={billingSaving}
               >
                 {billingSaving ? "Saving…" : "Save changes"}
+              </button>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {/* ── Security ── */}
+      {tab === "security" && (
+        <div className={styles.cards}>
+          <section className={styles.card}>
+            <h2 className={styles.sectionTitle}>Change password</h2>
+            <p className={styles.sectionDesc}>
+              Enter your current password to confirm your identity, then choose a new one.
+            </p>
+            <form onSubmit={changePassword} className={styles.form}>
+              <div className={styles.field}>
+                <label className={styles.label}>Current password</label>
+                <input
+                  className={styles.textInput}
+                  type="password"
+                  placeholder="••••••••"
+                  value={currentPw}
+                  onChange={(e) => setCurrentPw(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>New password</label>
+                <input
+                  className={styles.textInput}
+                  type="password"
+                  placeholder="Min. 8 characters"
+                  value={newPw}
+                  onChange={(e) => setNewPw(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label}>Confirm new password</label>
+                <input
+                  className={styles.textInput}
+                  type="password"
+                  placeholder="••••••••"
+                  value={confirmPw}
+                  onChange={(e) => setConfirmPw(e.target.value)}
+                  autoComplete="new-password"
+                  required
+                />
+              </div>
+              {pwError && <p className={styles.error}>{pwError}</p>}
+              {pwSaved && <p className={styles.success}>Password updated successfully!</p>}
+              <button type="submit" className={styles.saveBtn} disabled={pwSaving}>
+                {pwSaving ? "Updating…" : "Update password"}
               </button>
             </form>
           </section>
