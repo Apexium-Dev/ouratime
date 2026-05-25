@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { CreateProjectModal } from "./CreateProjectModal";
 import { FocusTimer } from "./FocusTimer";
+import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
 import { TagPicker, type Tag } from "./TagPicker";
 import styles from "./DashboardNavbar.module.css";
 
@@ -66,6 +67,9 @@ export function DashboardNavbar() {
   const [showFocus, setShowFocus]     = useState(false);
   const [focusEnabled, setFocusEnabled] = useState(true);
   const [focusAnimations, setFocusAnimations] = useState(true);
+
+  // Shortcuts modal
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
   const intervalRef      = useRef<ReturnType<typeof setInterval> | null>(null);
   const suggestionsRef   = useRef<HTMLDivElement>(null);
@@ -172,20 +176,28 @@ export function DashboardNavbar() {
     return () => window.removeEventListener("ouratime:projects-changed", loadProjects);
   }, [loadProjects]);
 
-  // ── Keyboard shortcut: Shift+Space to start / stop ────────
+  // ── Keyboard shortcuts ─────────────────────────────────────
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (!e.shiftKey || e.code !== "Space") return;
       const active = document.activeElement as HTMLElement;
-      if (
+      const inInput =
         active?.tagName === "INPUT" ||
         active?.tagName === "TEXTAREA" ||
         active?.tagName === "SELECT" ||
-        active?.isContentEditable
-      ) return;
-      e.preventDefault();
-      if (running) handleStop();
-      else if (description.trim()) handleStart();
+        active?.isContentEditable;
+
+      // ? → open shortcuts modal
+      if (e.key === "?" && !inInput) {
+        setShowShortcuts((v) => !v);
+        return;
+      }
+
+      // Shift+Space → start / stop timer
+      if (e.shiftKey && e.code === "Space" && !inInput) {
+        e.preventDefault();
+        if (running) handleStop();
+        else if (description.trim()) handleStart();
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -334,6 +346,10 @@ export function DashboardNavbar() {
 
   return (
     <>
+      {showShortcuts && (
+        <KeyboardShortcutsModal onClose={() => setShowShortcuts(false)} />
+      )}
+
       {showFocus && running && (
         <FocusTimer
           elapsed={elapsed}
@@ -592,6 +608,15 @@ export function DashboardNavbar() {
                 Start
               </button>
             )}
+
+            <button
+              className={styles.shortcutsBtn}
+              onClick={() => setShowShortcuts(true)}
+              title="Keyboard shortcuts (?)"
+              aria-label="Keyboard shortcuts"
+            >
+              ?
+            </button>
           </div>
 
         </div>
