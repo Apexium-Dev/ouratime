@@ -310,3 +310,88 @@
   background: rgba(220, 38, 38, 0.08);
   color: #dc2626;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .statCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .statLbl {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .statVal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .filterTabs {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .filterTab {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .filterTab:hover {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .filterTabActive {
+  background: var(--surface);
+  color: var(--text-1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .filterCount {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .table {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .tableHead {
+  background: var(--surface-2);
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tableRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tableRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .clientName {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .clientEmail {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .dateCell {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .amountCell {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .status_draft {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .empty,
+:global([data-theme="dark"]) .emptyState {
+  color: var(--text-4);
+}

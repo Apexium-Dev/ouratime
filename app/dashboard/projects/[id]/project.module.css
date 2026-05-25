@@ -817,3 +817,269 @@
 
 .cancelInviteBtn:hover:not(:disabled) { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
 .cancelInviteBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .projectTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .backLink {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .backLink:hover {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .desc {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .editBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .editBtn:hover {
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .editPanel {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .editLabel {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .editInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .editInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .editTextarea {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .editTextarea:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .rateWrap {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .rateWrap:focus-within {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .rateIn {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .tagBox {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .tagBox:focus-within {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .tagIn {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .tagIn::placeholder {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .cancelBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .cancelBtn:hover {
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .tabs {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .tab:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .tabActive {
+  background: var(--surface);
+  color: var(--text-1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .tabCount {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .statCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .statVal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inviteBox {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .inviteTitle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .inviteInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inviteInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .roleSelect,
+:global([data-theme="dark"]) .memberRoleSelect {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .memberList {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .memberRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .memberName {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .youBadge {
+  background: var(--surface-3);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .memberSince {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .role_member {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .timeSummaryLbl {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .dayGroup {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .dayHeader {
+  background: var(--surface-2);
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .dayLabel {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .dayTotal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .entryRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .entryDesc {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .entryNoDesc {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .entryDur {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .pendingSection {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .pendingSectionTitle {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .pendingCount {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .pendingRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .pendingName {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .pendingMeta {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .cancelInviteBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .emptyTime {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .loadingTxt {
+  color: var(--text-4);
+}

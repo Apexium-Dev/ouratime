@@ -849,6 +849,178 @@
   }
 }
 
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .backBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .invNum {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .status_draft {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .ghostBtn {
+  color: var(--text-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .ghostBtn:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .printBtn {
+  color: var(--text-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .cardTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .label {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .inlineField {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .inlineLabel {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .inlineInput {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inlineInput:focus {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .inlineSelect {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inlineSelect:focus {
+  background-color: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .input,
+:global([data-theme="dark"]) .textarea {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .input:focus,
+:global([data-theme="dark"]) .textarea:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .select {
+  background-color: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .select:focus {
+  background-color: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .itemsHead {
+  color: var(--text-4);
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .itemRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .itemDesc,
+:global([data-theme="dark"]) .itemNum {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .itemDesc:focus,
+:global([data-theme="dark"]) .itemNum:focus {
+  border-color: #2dd4bf;
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .itemTotal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .logoUpload {
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .modal {
+  background: var(--surface);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+:global([data-theme="dark"]) .modalHeader {
+  border-bottom-color: var(--border);
+}
+
+:global([data-theme="dark"]) .modalTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .modalClose:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .modalSubtitle {
+  color: var(--text-3);
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .entryRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .entryDesc {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .entryProject {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .modalFooter {
+  border-top-color: var(--border);
+}
+
+:global([data-theme="dark"]) .selectedCount {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .modalLoading,
+:global([data-theme="dark"]) .modalEmpty {
+  color: var(--text-4);
+}
+
 @media print {
   @page { margin: 1.5cm; size: A4; }
 
