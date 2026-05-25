@@ -436,3 +436,117 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .modal {
+  background: var(--surface);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .closeBtn:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .input {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .input:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .chip {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .chip:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .chipSelected {
+  border-color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.1);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .timeCard {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .timeCardLbl {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .dateInput,
+:global([data-theme="dark"]) .timeInput {
+  background: var(--surface-3);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .dateInput:focus,
+:global([data-theme="dark"]) .timeInput:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .timeConnectorLine {
+  background: var(--border-3);
+}
+
+:global([data-theme="dark"]) .durBadge {
+  color: var(--text-3);
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .billableBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .billableBtn:hover {
+  border-color: var(--border);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .footer {
+  border-top-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .cancelBtn {
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .cancelBtn:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .cancelDeleteBtn {
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .cancelDeleteBtn:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .noTags {
+  color: var(--text-5);
+}

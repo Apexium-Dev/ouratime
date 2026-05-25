@@ -323,3 +323,84 @@
   color: #bbb;
   font-size: 0.875rem;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .subtitle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .createCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .createInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .createInput::placeholder {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .createInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .list {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .row {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tagRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .actionBtn:hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .editRow {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .editInput {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  color: var(--text-1);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .deleteRow {
+  background: rgba(220, 38, 38, 0.05);
+}
+
+:global([data-theme="dark"]) .deleteMsg {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .cancelBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .cancelBtn:hover {
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .emptyState,
+:global([data-theme="dark"]) .empty {
+  color: var(--text-4);
+}

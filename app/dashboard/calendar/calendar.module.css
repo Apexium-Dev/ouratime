@@ -326,3 +326,98 @@
 }
 
 .panelEmptyState p { margin: 0; }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .monthTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .navBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .navBtn:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .dayLabel {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .cell {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .cell:hover {
+  border-color: var(--border-3);
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .cellOutside {
+  background: transparent;
+  border-color: transparent;
+}
+
+:global([data-theme="dark"]) .cellOutside:hover {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .cellToday {
+  background: rgba(0, 179, 179, 0.06) !important;
+}
+
+:global([data-theme="dark"]) .cellSelected {
+  background: rgba(0, 179, 179, 0.1) !important;
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.2);
+}
+
+:global([data-theme="dark"]) .cellDay {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .cellOutside .cellDay {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .dayPanel {
+  background: var(--surface);
+  border-left-color: var(--border);
+}
+
+:global([data-theme="dark"]) .dayPanelHeader {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .dayPanelLabel {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .entryRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .entryDesc {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .noDesc {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .entryProject {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .entryDur {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .panelEmpty,
+:global([data-theme="dark"]) .panelEmptyState {
+  color: var(--text-4);
+}

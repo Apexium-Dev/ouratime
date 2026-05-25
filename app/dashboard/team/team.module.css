@@ -789,3 +789,223 @@
   color: #bbb;
   font-size: 0.875rem;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .pageTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .pageSubtitle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .cancelDeleteWsBtn {
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .wsTrigger {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .wsTrigger:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .wsTriggerName {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .wsDropdown {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:global([data-theme="dark"]) .wsOption {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .wsOption:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .wsOptionActive {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .wsDropdownDivider {
+  background: var(--border-2);
+}
+
+:global([data-theme="dark"]) .wsNewTrigger {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .wsNewTrigger:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .wsNewInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .wsNewInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .inviteCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .inviteCardTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inviteInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .inviteInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .roleSelect {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .inviteCancelBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .inviteLinkUrl {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .searchInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .searchInput:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .table {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .tableHead {
+  background: var(--surface-2);
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tableRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tableRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .nameText {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .emailCell {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .statusIdle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .todayCell {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .roleMember {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .roleDropdown {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .actionBtn:hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .onlineDot {
+  border-color: var(--surface);
+}
+
+:global([data-theme="dark"]) .pendingTable {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .pendingRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .pendingEmail {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .pendingDate {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .createCard {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .createTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .createDesc {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .createInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .createInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .empty {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .deleteWsBtn {
+  border-color: rgba(239, 68, 68, 0.3);
+}

@@ -192,3 +192,45 @@
 }
 
 .emptyState p { margin: 0; }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .sectionTitle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .cardMain {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .cardTime {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .declineBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .status_cancelled {
+  background: var(--surface-3);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .empty,
+:global([data-theme="dark"]) .emptyState {
+  color: var(--text-4);
+}

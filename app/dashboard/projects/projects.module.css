@@ -510,3 +510,125 @@
   color: #bbb;
   font-size: 0.875rem;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .subtitle {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .tabs {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .tab:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .tabActive {
+  background: var(--surface);
+  color: var(--text-1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .tabCount {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .nameText {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .cardDesc {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .cardTag {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .statVal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .statLbl {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .statDivider {
+  background: var(--border-2);
+}
+
+:global([data-theme="dark"]) .actionBtn:hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .editInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .editInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .rateInputWrap {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .rateInputWrap:focus-within {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .rateInput {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .rateUnit {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .deleteMsg {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .deleteHint {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .cancelBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .cancelBtn:hover {
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .emptyState,
+:global([data-theme="dark"]) .empty {
+  color: var(--text-4);
+}

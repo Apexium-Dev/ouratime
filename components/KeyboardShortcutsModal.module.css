@@ -157,3 +157,58 @@
   color: #555;
   vertical-align: middle;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .modal {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+:global([data-theme="dark"]) .header {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .title {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .closeBtn {
+  background: var(--surface-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .closeBtn:hover {
+  background: var(--surface-4);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .groupLabel {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .row {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .desc {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .kbd {
+  background: var(--surface-3);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .kbdInline {
+  background: var(--surface-3);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .footer {
+  background: var(--surface-2);
+  border-top-color: var(--border-2);
+  color: var(--text-4);
+}

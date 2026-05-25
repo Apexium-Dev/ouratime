@@ -189,6 +189,57 @@
   margin: 0;
 }
 
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .trigger {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .trigger:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .triggerOpen {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .dropdown {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:global([data-theme="dark"]) .searchInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .searchInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .divider {
+  background: var(--border-2);
+}
+
+:global([data-theme="dark"]) .tagRow {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .tagRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .empty {
+  color: var(--text-4);
+}
+
 /* ── Tag color picker ── */
 .createSection {
   padding: 0 0.375rem 0.25rem;

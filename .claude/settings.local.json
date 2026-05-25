@@ -7,13 +7,22 @@
       "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/invoices/[id]\" \"g:/github/ouratime/app/invoice/[id]\")",
       "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/invoices/[id]\")",
       "Bash(mkdir -p \"g:/github/ouratime/app/invoice/[id]\")",
-      "Bash(npx tsc *)"
+      "Bash(npx tsc *)",
+      "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/projects/[id]\")",
+      "Bash(mkdir -p \"g:/github/ouratime/app/dashboard/inbox\" && mkdir -p \"g:/github/ouratime/app/invite/[token]\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "WebFetch(domain:opalapp.com)",
+      "Bash(npx next *)"
     ],
     "additionalDirectories": [
       "g:\\github\\ouratime\\app\\join",
       "g:\\github\\ouratime\\app\\dashboard\\invoices",
       "g:\\github\\ouratime\\app\\dashboard\\invoices\\[id]",
-      "g:\\github\\ouratime\\app\\invoice\\[id]"
+      "g:\\github\\ouratime\\app\\invoice\\[id]",
+      "g:\\github\\ouratime\\app\\dashboard\\projects",
+      "g:\\github\\ouratime\\app\\invite"
     ]
   }
 }

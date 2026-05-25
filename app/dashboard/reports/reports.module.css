@@ -482,3 +482,122 @@
 }
 
 .emptyState p { margin: 0; }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .tabs {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .tabActive {
+  background: var(--surface);
+  color: var(--text-1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .tab {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .tab:hover {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .customizeBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .customizeBtn:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .customizeMenu {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:global([data-theme="dark"]) .customizeRow {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .customizeRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .dateInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .dateInput:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+}
+
+:global([data-theme="dark"]) .statCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .statVal {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .statSub {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .chartCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .donutBig {
+  fill: var(--text-1);
+}
+
+:global([data-theme="dark"]) .legendRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .legendName {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .legendTime {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .legendPct {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .breakdownCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .breakName {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .breakTrack {
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .breakTime {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .breakPct {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .loading,
+:global([data-theme="dark"]) .emptyState {
+  color: var(--text-4);
+}
