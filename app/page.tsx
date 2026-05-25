@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import { LandingAnimations } from "@/components/LandingAnimations";
 
 const features = [
   {
@@ -75,9 +76,17 @@ const HERO_STATS = [
   { val: "0",    label: "Paywalls" },
 ];
 
+const STEPS = [
+  { n:"01", title:"Start the timer", desc:"One click to begin. Add a description and pick a project — or just let it run." },
+  { n:"02", title:"Organize your work", desc:"Group time by project, add tags, invite your team, and manage roles." },
+  { n:"03", title:"Read the reports", desc:"Weekly charts and breakdowns show exactly where your hours go." },
+];
+
 export default function Home() {
   return (
     <>
+      <LandingAnimations />
+
       {/* ── Hero ── */}
       <section className={styles.hero}>
         <div className={styles.heroGrid} aria-hidden="true" />
@@ -126,13 +135,15 @@ export default function Home() {
       {/* ── Dashboard preview ── */}
       <section className={styles.preview} id="preview">
         <div className={styles.previewInner}>
-          <span className={styles.sectionLabel}>Product</span>
-          <h2 className={styles.sectionHeadline}>Everything you need — nothing you don&apos;t</h2>
-          <p className={styles.sectionSub}>
+          <span className={styles.sectionLabel} data-reveal>Product</span>
+          <h2 className={styles.sectionHeadline} data-reveal data-reveal-delay="80">
+            Everything you need — nothing you don&apos;t
+          </h2>
+          <p className={styles.sectionSub} data-reveal data-reveal-delay="150">
             A full-featured time tracker that feels lightweight. Built for individuals and teams.
           </p>
 
-          <div className={styles.browser}>
+          <div className={styles.browser} data-reveal data-reveal-delay="220">
             <div className={styles.browserBar}>
               <div className={styles.browserDots}>
                 <span /><span /><span />
@@ -208,15 +219,13 @@ export default function Home() {
       {/* ── How it works ── */}
       <section className={styles.steps}>
         <div className={styles.stepsInner}>
-          <span className={styles.sectionLabel}>How it works</span>
-          <h2 className={styles.sectionHeadline}>Up and running in seconds</h2>
+          <span className={styles.sectionLabel} data-reveal>How it works</span>
+          <h2 className={styles.sectionHeadline} data-reveal data-reveal-delay="80">
+            Up and running in seconds
+          </h2>
           <div className={styles.stepsGrid}>
-            {[
-              { n:"01", title:"Start the timer", desc:"One click to begin. Add a description and pick a project — or just let it run." },
-              { n:"02", title:"Organize your work", desc:"Group time by project, add tags, invite your team, and manage roles." },
-              { n:"03", title:"Read the reports", desc:"Weekly charts and breakdowns show exactly where your hours go." },
-            ].map(s => (
-              <div key={s.n} className={styles.step}>
+            {STEPS.map((s, i) => (
+              <div key={s.n} className={styles.step} data-reveal data-reveal-delay={String(i * 120)}>
                 <div className={styles.stepNum}>{s.n}</div>
                 <h3 className={styles.stepTitle}>{s.title}</h3>
                 <p className={styles.stepDesc}>{s.desc}</p>
@@ -229,11 +238,13 @@ export default function Home() {
       {/* ── Features ── */}
       <section className={styles.featuresSection} id="features">
         <div className={styles.featuresInner}>
-          <span className={styles.sectionLabel}>Features</span>
-          <h2 className={styles.sectionHeadline}>Built for real work</h2>
+          <span className={styles.sectionLabel} data-reveal>Features</span>
+          <h2 className={styles.sectionHeadline} data-reveal data-reveal-delay="80">
+            Built for real work
+          </h2>
           <div className={styles.featuresGrid}>
-            {features.map(f => (
-              <div key={f.title} className={styles.featureCard}>
+            {features.map((f, i) => (
+              <div key={f.title} className={styles.featureCard} data-reveal data-reveal-delay={String(i * 70)}>
                 <div className={styles.featureIcon}>{f.icon}</div>
                 <h3 className={styles.featureTitle}>{f.title}</h3>
                 <p className={styles.featureDesc}>{f.desc}</p>
@@ -247,7 +258,7 @@ export default function Home() {
       <section className={styles.ctaBanner}>
         <div className={styles.ctaBannerGlow} aria-hidden="true" />
         <div className={styles.ctaBannerGrid}  aria-hidden="true" />
-        <div className={styles.ctaBannerInner}>
+        <div className={styles.ctaBannerInner} data-reveal>
           <h2 className={styles.ctaBannerHeadline}>Ready to take back your time?</h2>
           <p className={styles.ctaBannerSub}>Free forever. No credit card required.</p>
           <Link href="/signup" className={styles.ctaPrimary}>
