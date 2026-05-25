@@ -172,6 +172,26 @@ export function DashboardNavbar() {
     return () => window.removeEventListener("ouratime:projects-changed", loadProjects);
   }, [loadProjects]);
 
+  // ── Keyboard shortcut: Shift+Space to start / stop ────────
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (!e.shiftKey || e.code !== "Space") return;
+      const active = document.activeElement as HTMLElement;
+      if (
+        active?.tagName === "INPUT" ||
+        active?.tagName === "TEXTAREA" ||
+        active?.tagName === "SELECT" ||
+        active?.isContentEditable
+      ) return;
+      e.preventDefault();
+      if (running) handleStop();
+      else if (description.trim()) handleStart();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, description]);
+
   // ── Core start logic (accepts explicit params to avoid stale state) ──────────
   const startWith = useCallback(async (
     desc: string,
@@ -555,7 +575,7 @@ export function DashboardNavbar() {
             )}
 
             {running ? (
-              <button className={styles.stopBtn} onClick={handleStop}>
+              <button className={styles.stopBtn} onClick={handleStop} title="Stop timer (⇧ Space)">
                 <span className={styles.stopIcon} />
                 Stop
               </button>
@@ -564,6 +584,7 @@ export function DashboardNavbar() {
                 className={styles.startBtn}
                 onClick={handleStart}
                 disabled={!description.trim()}
+                title="Start timer (⇧ Space)"
               >
                 <svg width="11" height="13" viewBox="0 0 12 14" fill="currentColor">
                   <path d="M0 0l12 7-12 7V0z" />
