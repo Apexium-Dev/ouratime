@@ -14,6 +14,37 @@
   --color-secondary: #F6F5F4;
   --color-tertiary: #A96039;
   --color-neutral: #050505;
+
+  /* ── Theme tokens (light) ── */
+  --bg:        #F6F5F4;
+  --surface:   #ffffff;
+  --surface-2: #fafaf9;
+  --surface-3: #f5f3f1;
+  --surface-4: #eeecea;
+  --border:    #ece9e6;
+  --border-2:  #f0eeec;
+  --border-3:  #e2e0de;
+  --text-1:    #050505;
+  --text-2:    #444444;
+  --text-3:    #888888;
+  --text-4:    #aaaaaa;
+  --text-5:    #cccccc;
+}
+
+[data-theme="dark"] {
+  --bg:        #0d1117;
+  --surface:   #161b22;
+  --surface-2: #1c2128;
+  --surface-3: #21262d;
+  --surface-4: #2d333b;
+  --border:    #30363d;
+  --border-2:  #21262d;
+  --border-3:  #444c56;
+  --text-1:    #e6edf3;
+  --text-2:    #adbac7;
+  --text-3:    #768390;
+  --text-4:    #545d68;
+  --text-5:    #373e47;
 }
 
 html,

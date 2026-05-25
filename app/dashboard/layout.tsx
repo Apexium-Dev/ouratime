@@ -10,7 +10,7 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthGuard>
-      <div style={{ minHeight: "100vh", background: "#F6F5F4" }}>
+      <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
         <DashboardNavbar />
         <OnlineHeartbeat />
         <div style={{ display: "flex" }}>

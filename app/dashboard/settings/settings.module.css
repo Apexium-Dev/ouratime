@@ -517,3 +517,162 @@
 .sidebarToggleOn:hover:not(:disabled)  { background: rgba(0, 128, 128, 0.15); }
 .sidebarToggleOff:hover:not(:disabled) { background: #eeecea; color: #888; }
 .sidebarToggle:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .tabBar {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .tabBtn {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .tabBtn:hover {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .tabBtnActive {
+  background: var(--surface);
+  color: var(--text-1);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+:global([data-theme="dark"]) .card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .sectionTitle {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .sectionDesc {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .label {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .textInput {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .textInput:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .textInputReadonly {
+  background: var(--surface-3);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .selectInput {
+  background-color: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .selectInput:focus {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+  background-color: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .toggleBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .toggleBtn:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .toggleBtnActive {
+  border-color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.1);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .inputWrap {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .inputWrap:focus-within {
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.12);
+  background: var(--surface-3);
+}
+
+:global([data-theme="dark"]) .input {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .avatarHint {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .avatarHintSub {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .avatarBtn {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .toggleRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .toggleLabel {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .toggleDesc {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .resetBtn {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .resetBtn:hover {
+  background: var(--surface-3);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .sidebarList {
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .sidebarRow {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .sidebarRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .sidebarLabel {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .sidebarToggleOn {
+  background: rgba(45, 212, 191, 0.12);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .sidebarToggleOff {
+  background: var(--surface-3);
+  color: var(--text-4);
+}

@@ -498,3 +498,104 @@
   color: #008080;
   background: rgba(0,128,128,0.06);
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .navbar {
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+:global([data-theme="dark"]) .user {
+  border-right-color: var(--border);
+}
+
+:global([data-theme="dark"]) .userGreeting { color: var(--text-4); }
+:global([data-theme="dark"]) .userName     { color: var(--text-1); }
+
+:global([data-theme="dark"]) .descriptionInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .descriptionInput::placeholder { color: var(--text-4); }
+
+:global([data-theme="dark"]) .descriptionInput:focus {
+  background: var(--surface-3);
+  border-color: #2dd4bf;
+  box-shadow: 0 0 0 3px rgba(45,212,191,0.12);
+}
+
+:global([data-theme="dark"]) .entryPanel {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+}
+
+:global([data-theme="dark"]) .panelLabel   { color: var(--text-4); }
+:global([data-theme="dark"]) .panelDivider { background: var(--border-2); }
+:global([data-theme="dark"]) .dropdownDivider { background: var(--border-2); }
+:global([data-theme="dark"]) .suggestionsLabel { color: var(--text-4); }
+:global([data-theme="dark"]) .suggestionsEmpty { color: var(--text-4); }
+
+:global([data-theme="dark"]) .suggestionItem {
+  color: var(--text-2);
+}
+:global([data-theme="dark"]) .suggestionItem:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+:global([data-theme="dark"]) .suggestionItemActive {
+  background: rgba(45,212,191,0.1);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .projectChip {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+:global([data-theme="dark"]) .projectChip:hover {
+  background: var(--surface-3);
+  border-color: var(--border-3);
+}
+:global([data-theme="dark"]) .projectChipDotEmpty { border-color: var(--text-4); }
+
+:global([data-theme="dark"]) .controls {
+  border-left-color: var(--border);
+}
+
+:global([data-theme="dark"]) .projectBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+:global([data-theme="dark"]) .projectBtn:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .projectDropdown {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+:global([data-theme="dark"]) .billableBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+:global([data-theme="dark"]) .billableBtn:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .shortcutsBtn {
+  border-color: var(--border-3);
+  color: var(--text-4);
+}
+:global([data-theme="dark"]) .shortcutsBtn:hover {
+  border-color: #2dd4bf;
+  color: #2dd4bf;
+  background: rgba(45,212,191,0.08);
+}

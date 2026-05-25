@@ -448,3 +448,129 @@
   color: #bbb;
   font-size: 0.875rem;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .card {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .statValue {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .searchInput {
+  background: var(--surface-2);
+  color: var(--text-1);
+  border-color: var(--border-3);
+}
+
+:global([data-theme="dark"]) .searchInput::placeholder {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .searchInput:focus {
+  border-color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .searchIcon {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .searchClear {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .searchClear:hover {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .projectDropBtn {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .projectDropBtn:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .projectDropMenu {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:global([data-theme="dark"]) .projectDropItem {
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .projectDropItem:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .projectDropItemActive {
+  background: rgba(0, 179, 179, 0.12);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .clearFilters {
+  background: var(--surface-2);
+  border-color: var(--border-3);
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .clearFilters:hover {
+  border-color: var(--border);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .groupLabel {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .entryCard {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:global([data-theme="dark"]) .entryRow:hover {
+  background: var(--surface-2);
+}
+
+:global([data-theme="dark"]) .entryRowBorder {
+  border-bottom-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .entryDesc {
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .noDesc {
+  color: var(--text-5);
+}
+
+:global([data-theme="dark"]) .projectChip {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .editBtn:hover {
+  background: var(--surface-3);
+  border-color: var(--border);
+  color: var(--text-2);
+}
+
+:global([data-theme="dark"]) .playBtn {
+  background: var(--surface-3);
+  border-color: var(--border);
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .emptyState {
+  color: var(--text-4);
+}
+
+:global([data-theme="dark"]) .empty {
+  color: var(--text-4);
+}

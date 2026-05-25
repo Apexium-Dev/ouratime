@@ -109,3 +109,36 @@
   padding-top: 0.75rem;
   border-top: 1px solid #f0eeec;
 }
+
+/* ── Dark mode ── */
+:global([data-theme="dark"]) .sidebar {
+  background: var(--surface);
+  border-right-color: var(--border);
+}
+
+:global([data-theme="dark"]) .item {
+  color: var(--text-3);
+}
+
+:global([data-theme="dark"]) .item:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+:global([data-theme="dark"]) .itemActive {
+  background: rgba(0, 179, 179, 0.12);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .itemActive:hover {
+  background: rgba(0, 179, 179, 0.18);
+  color: #2dd4bf;
+}
+
+:global([data-theme="dark"]) .bottom {
+  border-top-color: var(--border-2);
+}
+
+:global([data-theme="dark"]) .navItemDropTarget {
+  border-top-color: #2dd4bf;
+}
