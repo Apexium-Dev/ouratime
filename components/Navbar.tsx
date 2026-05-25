@@ -13,7 +13,7 @@ const appLinks = [
 
 const marketingLinks = [
   { href: "/#features", label: "Features" },
-  { href: "/#method", label: "About" },
+  { href: "/#preview", label: "Product" },
 ];
 
 export function Navbar() {
