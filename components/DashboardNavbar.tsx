@@ -71,11 +71,12 @@ export function DashboardNavbar() {
   // Shortcuts modal
   const [showShortcuts, setShowShortcuts] = useState(false);
 
-  const intervalRef      = useRef<ReturnType<typeof setInterval> | null>(null);
-  const suggestionsRef   = useRef<HTMLDivElement>(null);
-  const projectDropRef   = useRef<HTMLDivElement>(null);
-  const activeEntryIdRef = useRef<string | null>(null);
-  const elapsedRef       = useRef<number>(0);
+  const intervalRef        = useRef<ReturnType<typeof setInterval> | null>(null);
+  const suggestionsRef     = useRef<HTMLDivElement>(null);
+  const projectDropRef     = useRef<HTMLDivElement>(null);
+  const activeEntryIdRef   = useRef<string | null>(null);
+  const elapsedRef         = useRef<number>(0);
+  const startTimestampRef  = useRef<number>(0);
 
   // Keep refs in sync so async handlers always see current values
   useEffect(() => { activeEntryIdRef.current = activeEntryId; }, [activeEntryId]);
@@ -254,6 +255,7 @@ export function DashboardNavbar() {
           tags.map((t) => ({ time_entry_id: entry.id, tag_id: t.id }))
         );
       }
+      startTimestampRef.current = new Date(entry.started_at).getTime();
       setActiveEntryId(entry.id);
       setElapsed(0);
       setRunning(true);
@@ -267,15 +269,47 @@ export function DashboardNavbar() {
   const handleStart = () =>
     startWith(description, selectedProject, selectedTags, billable);
 
-  // ── Timer interval ─────────────────────────────────────────
+  // ── Timer interval — always recalculates from start timestamp ──
   useEffect(() => {
     if (running) {
-      intervalRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
+      intervalRef.current = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - startTimestampRef.current) / 1000));
+      }, 1000);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [running]);
+
+  // ── Restore running timer on mount (page refresh / navigation) ──
+  useEffect(() => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data: entry } = await supabase
+        .from("time_entries")
+        .select("id, description, started_at, billable, project_id, projects(id, name, color)")
+        .eq("user_id", user.id)
+        .is("stopped_at", null)
+        .order("started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!entry) return;
+
+      const ts = new Date(entry.started_at).getTime();
+      startTimestampRef.current = ts;
+      setActiveEntryId(entry.id);
+      setElapsed(Math.floor((Date.now() - ts) / 1000));
+      setRunning(true);
+      setDescription(entry.description ?? "");
+      setBillable(entry.billable ?? true);
+
+      if (entry.project_id && entry.projects) {
+        const proj = Array.isArray(entry.projects) ? entry.projects[0] : entry.projects;
+        if (proj) setSelectedProject({ id: entry.project_id, ...(proj as { name: string; color: string }) });
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ── Resume event from dashboard ───────────────────────────
   useEffect(() => {
