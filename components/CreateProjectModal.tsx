@@ -3,6 +3,7 @@
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./CreateProjectModal.module.css";
+import { showToast } from "./Toast";
 
 const PRESET_COLORS = [
   "#008080", "#0ea5e9", "#8b5cf6", "#ec4899",
@@ -69,6 +70,7 @@ export function CreateProjectModal({ onClose, onCreate }: Props) {
 
     if (dbError) { setError(dbError.message); setLoading(false); return; }
 
+    showToast("Project created");
     onCreate(data);
     onClose();
   };

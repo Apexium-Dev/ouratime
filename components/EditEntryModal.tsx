@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import styles from "./EditEntryModal.module.css";
+import { showToast } from "./Toast";
 
 interface Tag {
   id: string;
@@ -165,6 +166,7 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
         projects: projectsValue as { name: string; color: string } | null,
         time_entry_tags: selectedTags.map((t) => ({ tags: t })),
       });
+      showToast("Entry saved");
     }
     setSaving(false);
   };
@@ -179,6 +181,7 @@ export function EditEntryModal({ entry, onClose, onSave, onDelete }: Props) {
       .delete()
       .eq("time_entry_id", entry.id);
     await supabase.from("time_entries").delete().eq("id", entry.id);
+    showToast("Entry deleted", "info");
     onDelete(entry.id);
   };
 

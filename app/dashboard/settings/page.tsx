@@ -11,6 +11,7 @@ import {
 } from "@/lib/sidebarConfig";
 import styles from "./settings.module.css";
 import { getTheme, setTheme } from "@/components/ThemeProvider";
+import { showToast } from "@/components/Toast";
 
 type Tab = "profile" | "time" | "billing" | "sidebar" | "security" | "focus" | "appearance";
 
@@ -168,6 +169,7 @@ export default function SettingsPage() {
     setAvatarPreview(null);
     setUsername(uname);
     setProfileSaved(true);
+    showToast("Profile saved");
     setTimeout(() => setProfileSaved(false), 3000);
   };
 
@@ -187,6 +189,7 @@ export default function SettingsPage() {
       return;
     }
     setTimeSaved(true);
+    showToast("Time settings saved");
     setTimeout(() => setTimeSaved(false), 3000);
   };
 
@@ -211,6 +214,7 @@ export default function SettingsPage() {
       return;
     }
     setBillingSaved(true);
+    showToast("Billing saved");
     setTimeout(() => setBillingSaved(false), 3000);
   };
 
@@ -244,6 +248,7 @@ export default function SettingsPage() {
     setNewPw("");
     setConfirmPw("");
     setPwSaved(true);
+    showToast("Password updated");
     setTimeout(() => setPwSaved(false), 3000);
   };
 

@@ -7,9 +7,18 @@ import { FocusTimer } from "./FocusTimer";
 import { KeyboardShortcutsModal } from "./KeyboardShortcutsModal";
 import { TagPicker, type Tag } from "./TagPicker";
 import styles from "./DashboardNavbar.module.css";
+import { showToast } from "./Toast";
 
 const FOCUS_MODE_KEY = "ouratime:focus-mode";
 const FOCUS_ANIM_KEY = "ouratime:focus-animations";
+
+function fmtElapsed(s: number) {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m`;
+  return `${s}s`;
+}
 
 function getFocusSetting(key: string, defaultVal = true): boolean {
   if (typeof window === "undefined") return defaultVal;
@@ -260,6 +269,7 @@ export function DashboardNavbar() {
       setElapsed(0);
       setRunning(true);
       setShowSuggestions(false);
+      showToast("Timer started");
       window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
       if (getFocusSetting(FOCUS_MODE_KEY, true)) setShowFocus(true);
     }
@@ -346,13 +356,14 @@ export function DashboardNavbar() {
 
   // ── Stop ───────────────────────────────────────────────────
   const handleStop = async () => {
+    const finalElapsed = elapsed;
     setRunning(false);
     if (!activeEntryId) return;
 
     const stoppedAt = new Date().toISOString();
     await supabase.from("time_entries").update({
       stopped_at: stoppedAt,
-      duration:   elapsed,
+      duration:   finalElapsed,
     }).eq("id", activeEntryId);
 
     setActiveEntryId(null);
@@ -363,6 +374,7 @@ export function DashboardNavbar() {
     setBillable(true);
     setElapsed(0);
     setShowFocus(false);
+    showToast(`Stopped — ${fmtElapsed(finalElapsed)} tracked`);
     window.dispatchEvent(new CustomEvent("ouratime:timer-changed"));
   };
 
