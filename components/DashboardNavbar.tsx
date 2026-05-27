@@ -279,6 +279,20 @@ export function DashboardNavbar() {
   const handleStart = () =>
     startWith(description, selectedProject, selectedTags, billable);
 
+  // ── Browser tab title ──────────────────────────────────────────
+  useEffect(() => {
+    if (!running) {
+      document.title = "OuraTime - Time Tracking";
+      return () => {};
+    }
+    const h = Math.floor(elapsed / 3600);
+    const m = Math.floor((elapsed % 3600) / 60);
+    const s = elapsed % 60;
+    const hms = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    document.title = `${hms} · OuraTime`;
+    return () => { document.title = "OuraTime - Time Tracking"; };
+  }, [running, elapsed]);
+
   // ── Timer interval — always recalculates from start timestamp ──
   useEffect(() => {
     if (running) {
