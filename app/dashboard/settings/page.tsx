@@ -56,8 +56,9 @@ export default function SettingsPage() {
   const [pwSaved, setPwSaved]     = useState(false);
   const [pwError, setPwError]     = useState("");
 
-  // ── Appearance ────────────────────────────────────────
+  // ── Appearance + Goal ────────────────────────────────────────
   const [theme, setThemeState] = useState<"light" | "dark">("light");
+  const [dailyGoalH, setDailyGoalH] = useState<number>(8);
 
   // ── Focus mode ─────────────────────────────────────────
   const [focusMode, setFocusModeState] = useState(true);
@@ -93,6 +94,8 @@ export default function SettingsPage() {
     });
     setSidebarConfig(loadSidebarConfig());
     setThemeState(getTheme());
+    const raw = localStorage.getItem("ouratime:daily-goal");
+    setDailyGoalH(raw !== null ? parseFloat(raw) : 8);
     const fm = localStorage.getItem(FOCUS_MODE_KEY);
     const fa = localStorage.getItem(FOCUS_ANIM_KEY);
     if (fm !== null) setFocusModeState(fm === "true");
@@ -256,6 +259,14 @@ export default function SettingsPage() {
   const toggleTheme = (next: "light" | "dark") => {
     setThemeState(next);
     setTheme(next);
+  };
+
+  const saveGoal = (h: number) => {
+    const clamped = Math.max(0, Math.min(24, h));
+    setDailyGoalH(clamped);
+    localStorage.setItem("ouratime:daily-goal", String(clamped));
+    window.dispatchEvent(new CustomEvent("ouratime:goal-changed"));
+    showToast("Daily goal saved");
   };
 
   // ── Focus mode toggles ────────────────────────────────
@@ -845,6 +856,41 @@ export default function SettingsPage() {
                   role="switch"
                   aria-checked={theme === "dark"}
                 />
+              </div>
+            </div>
+          </section>
+
+          <section className={styles.card}>
+            <h2 className={styles.sectionTitle}>Daily goal</h2>
+            <p className={styles.sectionDesc}>
+              Set a daily tracking target. A progress bar appears in the sidebar. Set to 0 to hide it.
+            </p>
+            <div className={styles.form}>
+              <div className={styles.field}>
+                <label className={styles.label}>Hours per day</label>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
+                  <div className={styles.inputWrap} style={{ width: "auto" }}>
+                    <input
+                      className={styles.input}
+                      type="number"
+                      min="0"
+                      max="24"
+                      step="0.5"
+                      value={dailyGoalH}
+                      onChange={(e) => setDailyGoalH(parseFloat(e.target.value) || 0)}
+                      style={{ width: "72px" }}
+                    />
+                    <span className={styles.perHour}>h / day</span>
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.saveBtn}
+                    onClick={() => saveGoal(dailyGoalH)}
+                    style={{ marginTop: 0 }}
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
           </section>

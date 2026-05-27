@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import {
   defaultConfig,
@@ -11,6 +11,18 @@ import {
 } from "@/lib/sidebarConfig";
 import { supabase } from "@/lib/supabase";
 import styles from "./DashboardSidebar.module.css";
+
+const GOAL_KEY = "ouratime:daily-goal";
+const DEFAULT_GOAL_H = 8;
+
+function fmtSec(s: number): string {
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  if (h > 0 && m > 0) return `${h}h ${m}m`;
+  if (h > 0) return `${h}h`;
+  if (m > 0) return `${m}m`;
+  return "<1m";
+}
 
 const NAV = [
   {
@@ -183,6 +195,50 @@ export function DashboardSidebar() {
   const [dropHref, setDropHref] = useState<string | null>(null);
   const [unread, setUnread] = useState(0);
 
+  // ── Daily goal ──────────────────────────────────────────
+  const [todaySec, setTodaySec] = useState(0);
+  const [goalH, setGoalH] = useState(DEFAULT_GOAL_H);
+
+  const fetchToday = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const { data } = await supabase
+      .from("time_entries")
+      .select("duration, stopped_at, started_at")
+      .eq("user_id", user.id)
+      .gte("started_at", start.toISOString());
+    if (!data) return;
+    const total = data.reduce((sum, e) => {
+      if (e.stopped_at !== null) return sum + (e.duration ?? 0);
+      return sum + Math.floor((Date.now() - new Date(e.started_at).getTime()) / 1000);
+    }, 0);
+    setTodaySec(total);
+  }, []);
+
+  useEffect(() => {
+    const raw = localStorage.getItem(GOAL_KEY);
+    setGoalH(raw !== null ? parseFloat(raw) : DEFAULT_GOAL_H);
+    const handler = () => {
+      const v = localStorage.getItem(GOAL_KEY);
+      setGoalH(v !== null ? parseFloat(v) : DEFAULT_GOAL_H);
+    };
+    window.addEventListener("ouratime:goal-changed", handler);
+    return () => window.removeEventListener("ouratime:goal-changed", handler);
+  }, []);
+
+  useEffect(() => {
+    fetchToday();
+    const onTimerChange = () => fetchToday();
+    window.addEventListener("ouratime:timer-changed", onTimerChange);
+    const tick = setInterval(fetchToday, 60_000);
+    return () => {
+      window.removeEventListener("ouratime:timer-changed", onTimerChange);
+      clearInterval(tick);
+    };
+  }, [fetchToday]);
+
   useEffect(() => {
     setConfig(loadSidebarConfig());
     const handler = () => setConfig(loadSidebarConfig());
@@ -283,6 +339,30 @@ export function DashboardSidebar() {
           </div>
         ))}
       </nav>
+
+      {/* ── Daily goal widget ── */}
+      {goalH > 0 && (
+        <div className={styles.goalCard}>
+          <div className={styles.goalHeader}>
+            <span className={styles.goalLabel}>Today</span>
+            <span className={styles.goalFraction}>
+              <span className={todaySec >= goalH * 3600 ? styles.goalDoneText : ""}>
+                {fmtSec(todaySec)}
+              </span>
+              <span className={styles.goalOf}> / {goalH}h</span>
+            </span>
+          </div>
+          <div className={styles.goalTrack}>
+            <div
+              className={`${styles.goalFill} ${todaySec >= goalH * 3600 ? styles.goalFillDone : ""}`}
+              style={{ width: `${Math.min(100, (todaySec / (goalH * 3600)) * 100).toFixed(1)}%` }}
+            />
+          </div>
+          {todaySec >= goalH * 3600 && (
+            <p className={styles.goalReached}>Goal reached ✓</p>
+          )}
+        </div>
+      )}
 
       <div className={styles.bottom}>
         <Link
