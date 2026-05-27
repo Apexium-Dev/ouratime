@@ -13,6 +13,7 @@ interface InvoiceItem {
 
 interface Invoice {
   id: string;
+  user_id: string;
   number: string;
   client_name: string;
   client_email: string;
@@ -30,7 +31,6 @@ interface Invoice {
   pay_to: string;
   logo_url: string;
   invoice_items: InvoiceItem[];
-  profiles: { full_name: string | null; email: string | null } | null;
 }
 
 function fmt(n: number, currency = "USD") {
@@ -54,22 +54,31 @@ export default async function PublicInvoicePage({ params }: { params: { id: stri
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { data } = await supabase
+  // Query invoice + items separately from profiles to avoid FK join issues
+  const { data, error } = await supabase
     .from("invoices")
-    .select("*, invoice_items(*), profiles(full_name, email)")
+    .select("*, invoice_items(*)")
     .eq("id", params.id)
-    .single();
+    .maybeSingle();
 
-  if (!data || data.status === "draft") notFound();
+  if (error || !data || data.status === "draft") notFound();
 
   const inv = data as Invoice;
+
+  // Separately fetch the owner's profile (anon policy allows this for public invoices)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", inv.user_id)
+    .maybeSingle();
+
   const items = [...inv.invoice_items].sort((a, b) => a.sort_order - b.sort_order);
   const sub   = items.reduce((s, i) => s + i.quantity * i.rate, 0);
   const tax   = sub * (inv.tax_rate / 100);
   const total = sub + tax;
 
-  const fromName = inv.from_name || inv.profiles?.full_name || null;
-  const fromEmail = inv.from_email || inv.profiles?.email || null;
+  const fromName = inv.from_name || profile?.full_name || null;
+  const fromEmail = inv.from_email || profile?.email || null;
 
   return (
     <div className={styles.page}>
